@@ -221,6 +221,19 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
       `<div>${list(items)}<p class='close-line'>${close}</p><div class='ctas'><a class='btn solid' href='/${k}'>Explore ${n}</a></div></div></div></section>`;
   });
 
+  // 3b. Stocks, gold and crypto (summaries; full detail lives on /money)
+  const assets = [
+    ['Stocks', 'PSX &amp; global', 'Own a small part of real businesses. You earn when profits grow and from dividends. On the PSX you buy through an SECP-licensed broker; funds and ETFs spread your money across many companies.', 'Company and market falls', 3, 'Medium to high', '/money#stocks'],
+    ['Gold', 'Priced per tola', "A traditional store of value in Pakistan. In rupees it often rises when the rupee weakens, but it pays no income, can stay flat for years, and jewellery carries making charges you don't get back.", 'Long flat or falling periods', 2, 'Medium', '/money#gold'],
+    ['Crypto', 'Trades 24/7', "Digital assets like bitcoin. Prices can swing wildly in a day. Exchanges can fail, accounts get hacked, scams are common, and Pakistan's rules are still changing. Only use money you could lose.", 'Crashes, hacks and scams', 5, 'Very high', '/money#crypto'],
+  ];
+  h += `<section class='block assets money' id='assets'><div class='wrap'><div class='sechead'><div><span class='chip'><i></i>Money</span><h2 style='margin-top:16px'>Stocks, Gold and Crypto.</h2></div><a href='/money#compare'>Compare them side by side →</a></div>` +
+    `<p class='assets-lead'>Three common ways people try to grow money, each with very different rewards and risks. Learn how they work before you put money in.</p><div class='acards'>` +
+    assets.map(([t, tag, d, risk, lvl, lvlTxt, href]) => `<a class='acard' href='${href}'><div class='acard-top'><h3>${t}</h3><span class='tag'>${tag}</span></div><p>${d}</p>` +
+      `<div class='risk'><span class='risk-label'>Risk: <b>${lvlTxt}</b></span><span class='meter' role='img' aria-label='Risk ${lvl} out of 5'>${[1, 2, 3, 4, 5].map(i => `<i${i <= lvl ? " class='on'" : ''}></i>`).join('')}</span><span class='risk-main'>Main risk: ${risk}</span></div>` +
+      `<span class='more'>Learn about ${t.toLowerCase()} →</span></a>`).join('') +
+    `</div><p class='meta' style='margin-top:18px'>Educational content only. Not financial advice. All investing carries risk, including the loss of capital.</p></div></section>`;
+
   // 4. The framework
   h += `<section class='block' id='framework'><div class='wrap split'><div><span class='eyebrow'>The Framework</span><h2 style='margin-top:12px'>Three Areas. One Life.</h2>` +
     `<p>Mind, Body and Money are often treated as separate subjects.</p><p class='big-line' style='font-size:clamp(28px,3.4vw,40px)'>They aren't.</p>` +
