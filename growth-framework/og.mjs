@@ -14,12 +14,12 @@ const C = { Mind: '#a082ff', Body: '#3ddc84', Money: '#ffc454', Brand: '#a082ff'
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const ITEMS = [
   { name: 'default', label: 'Mind · Body · Money', color: C.Brand, title: 'Better life through <b style="color:#a082ff">mind</b>, <b style="color:#3ddc84">body</b> &amp; <b style="color:#ffc454">money</b>.', raw: true },
-  { name: 'mind', label: 'Mind', color: C.Mind, title: 'Discipline, focus and habits that hold up on low days.' },
-  { name: 'body', label: 'Body', color: C.Body, title: 'Simple training, sleep and food you can keep for life.' },
-  { name: 'money', label: 'Money', color: C.Money, title: 'Rules before moods: risk, investing and PSX research.' },
+  { name: 'mind', label: 'Mind', color: C.Mind, title: 'Discipline, ambition and wellness: the mind behind every habit.' },
+  { name: 'body', label: 'Body', color: C.Body, title: 'Exercise, food values, vitamins, minerals and electrolytes.' },
+  { name: 'money', label: 'Money', color: C.Money, title: 'PSX, stocks, gold and crypto, explained with rules first.' },
   { name: 'psx', label: 'PSX Alpha', color: C.Money, title: 'Research a PSX stock in five numbers.' },
   { name: 'guides', label: 'Free guides', color: C.Money, title: 'Free trading and risk management guides.' },
-  { name: 'about', label: 'About', color: C.Mind, title: 'Discipline first. Then everything else.' },
+  { name: 'about', label: 'About', color: C.Mind, title: 'One framework for a better life: mind, body and money.' },
   { name: 'articles', label: 'Library', color: C.Brand, title: `All ${POSTS.length} articles on mind, body and money.` },
   ...POSTS.map(p => ({ name: p.slug, label: p.pillar, color: C[p.pillar], title: p.title, meta: `${p.read} min read` })),
 ];

@@ -3,6 +3,7 @@
 import { mkdirSync, writeFileSync, readFileSync, rmSync, cpSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { POSTS } from './src/posts.mjs';
+import { FOUNDATIONS } from './src/foundations.mjs';
 
 const SITE = 'https://thegrowthframework.live';
 const NAME = 'The Growth Framework';
@@ -81,7 +82,7 @@ function layout({ path, title, description, og = 'default', type = 'website', js
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="${CSS_HREF}">
-<script>try{var t=localStorage.getItem('tgf-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('tgf-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 ${head}${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>\n` : ''}</head>
 <body>
 <header class="top">
@@ -171,37 +172,64 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
 
 { // home
   const latest = POSTS.slice(0, 7);
-  let h = `<section class='hero'><div class='wrap hero-grid'><div>` +
+  // Hero: three overlapping circles, one per pillar, meeting in the middle.
+  const venn = `<svg class='venn' viewBox='0 0 400 380' role='img' aria-labelledby='venn-t'><title id='venn-t'>Mind, Body and Money overlap. Growth happens where they meet.</title>` +
+    `<g class='rings'><circle class='c-mind' cx='200' cy='130' r='112'/><circle class='c-body' cx='138' cy='240' r='112'/><circle class='c-money' cx='262' cy='240' r='112'/></g>` +
+    `<text x='200' y='88' class='vl l-mind'>MIND</text><text x='98' y='282' class='vl l-body'>BODY</text><text x='302' y='282' class='vl l-money'>MONEY</text>` +
+    `<text x='200' y='212' class='vl l-you'>YOU</text></svg>`;
+  let h = `<section class='hero hero-x'><div class='wrap hero-grid'><div>` +
     `<span class='eyebrow'>${HANDLE} · Pakistan</span>` +
-    `<h1 style='margin-top:16px'>Better life through <span class='m'>mind</span>, <span class='b'>body</span> &amp; <span class='y'>money</span>.</h1>` +
-    `<p class='lead'>Short, sourced notes on discipline, simple training, healthy desi food and sensible investing, plus PSX Alpha: a method for researching Pakistan Stock Exchange stocks.</p>` +
-    `<div class='ctas'><a class='btn solid' href='#latest'>Read the latest</a><a class='btn ghost' href='${IG}' target='_blank' rel='noopener'>Follow on Instagram</a></div>` +
-    `</div><div class='hero-art' aria-hidden='true'>${slide('body-p', 'BODY', '1/7', 'Push-ups, <em>done right</em>')}${slide('mind', 'MIND', '1/7', 'Discipline beats <em>motivation</em>')}</div></div><div class='giant' aria-hidden='true'>GROW</div></section>`;
+    `<h1 style='margin-top:16px'>Grow your <span class='m'>mind</span>, <span class='b'>body</span> &amp; <span class='y'>money</span>. Together.</h1>` +
+    `<p class='lead'>The Growth Framework is a simple system for a better life: discipline and clear aims for the mind, movement and real food for the body, and rules-first investing for your money. Plain language, sourced facts, built for Pakistan and South Asia.</p>` +
+    `<div class='ctas'><a class='btn solid' href='#framework'>Explore the framework</a><a class='btn ghost' href='#latest'>Read the latest</a></div>` +
+    `</div><div class='hero-venn' aria-hidden='false'>${venn}</div></div><div class='giant' aria-hidden='true'>GROW</div></section>`;
   h += line();
-  h += `<section class='block'><div class='wrap'><div class='sechead'><h2>Three pillars, one framework</h2><a href='/articles/why-one-framework'>Why all three →</a></div><div class='pillars'>`;
+  // Manifesto: why the three belong together.
+  h += `<section class='block manifesto'><div class='wrap'><p class='eyebrow'>Why one framework</p><div class='mf'>` +
+    `<p><span class='acc-b'>A tired body</span> makes worse decisions.</p><p><span class='acc-m'>A stressed mind</span> skips training.</p><p><span class='acc-y'>Money pressure</span> wears down both.</p>` +
+    `</div><p class='mf-end'>So we work on all three, with the same method: <b>decide in advance, keep it small, review every week.</b></p></div></section>`;
+  // Framework explorer: tabs per pillar, each topic links to its section on the pillar page.
+  h += `<section class='block band' id='framework'><div class='wrap'><div class='sechead'><h2>The framework</h2><span class='meta'>Tap a pillar to explore</span></div>` +
+    `<div class='tabs' role='tablist' aria-label='Pillars'>` +
+    ['Mind', 'Body', 'Money'].map((n, i) => `<button type='button' role='tab' class='tab ${COLORS[n]}' id='tab-${PILLARS[n].key}' aria-controls='panel-${PILLARS[n].key}' aria-selected='${i === 0}'><i class='dot'></i>${n}</button>`).join('') +
+    `</div>`;
   for (const n of ['Mind', 'Body', 'Money']) {
-    const P = PILLARS[n];
-    h += `<div class='pillar ${COLORS[n]}'><span class='count'>${count(n)} articles</span><h3><a href='/${P.key}'>${n}</a></h3><p>${P.line}</p><ul>${P.topics.map(([t, href]) => `<li><a href='${href}'${ext(href)}>${t}</a></li>`).join('')}</ul></div>`;
+    const P = PILLARS[n], F = FOUNDATIONS[n];
+    h += `<div class='panel ${COLORS[n]}' role='tabpanel' id='panel-${P.key}' aria-labelledby='tab-${P.key}'>` +
+      `<div class='panel-head'><h3>${n}</h3><p>${F.intro}</p></div><div class='topics'>` +
+      F.sections.map((s, i) => `<a class='topic' href='/${P.key}#${s.id}'><span class='num'>${String(i + 1).padStart(2, '0')}</span><b>${s.title}</b><span>${s.line}</span></a>`).join('') +
+      `</div><a class='btn ghost panel-more' href='/${P.key}'>Read the full ${n} guide →</a></div>`;
   }
-  h += `</div></div></section>`;
+  h += `</div></section>`;
+  // Start this week: one small action per pillar (checkbox state kept in the viewer's browser).
+  h += `<section class='block'><div class='wrap split'><div><span class='eyebrow'>Start this week</span><h2 style='margin-top:12px'>Three small actions. One per pillar.</h2><p>Keep each one so small you can do it on a bad day. Tick them off as you go. Your ticks stay on this device.</p></div>` +
+    `<ul class='starter'>` +
+    [['mind', 'Mind', 'Set one fixed wake-up time and keep it for seven days.'], ['body-p', 'Body', 'Walk 20 minutes a day, and add a vegetable to one meal.'], ['money', 'Money', 'Write down every expense for one week, then set an automatic monthly saving.']]
+      .map(([c, n, t], i) => `<li class='${c}'><label><input type='checkbox' data-starter='${i}'><span class='box'></span><span><b>${n}.</b> ${t}</span></label></li>`).join('') +
+    `</ul></div></section>`;
   h += `<section class='block' id='latest' style='padding-top:0'><div class='wrap'><div class='sechead'><h2>Latest articles</h2><a href='/articles'>All ${POSTS.length} articles →</a></div>${feature(latest[0])}<div class='grid'>${latest.slice(1).map(card).join('')}</div></div></section>`;
   h += psxBand(true);
   h += `<section class='block'><div class='wrap'><div class='sechead'><h2>Follow along</h2><a href='${IG}' target='_blank' rel='noopener'>${HANDLE} →</a></div><p style='color:var(--muted);margin:-12px 0 24px;max-width:40em'>New carousels and Reels every day on Instagram. Career and markets updates on LinkedIn.</p>${igEmbeds()}${socials()}</div></section>`;
   h += `<section class='block band'><div class='wrap split'><div><span class='eyebrow'>Free</span><h2 style='margin-top:12px'>Free trading guides</h2></div><div><p>Get the <b>Trading Guidelines</b> and <b>Risk Management Guide</b> PDFs for free. Comment <b>GUIDE</b> on any trading post on Instagram and the guide is sent to you.</p><div class='ctas'><a class='btn ${SIGNUP.url ? 'ghost' : 'solid'}' href='/guides'>See the guides</a></div>${signupForm('home')}</div></div></section>`;
   page('/', 'index.html', {
     title: NAME + ' · Mind, Body & Money',
-    description: 'Better life through mind, body and money. Practical notes on discipline, simple training, healthy food and sensible investing, plus PSX Alpha: a method for researching Pakistan Stock Exchange stocks.',
+    description: 'A simple system for a better life: discipline and ambition for the mind, exercise, nutrition, vitamins and electrolytes for the body, and PSX, stocks, gold and crypto explained for your money.',
     head: legacyRedirect,
     jsonld: { '@context': 'https://schema.org', '@type': 'WebSite', name: NAME, url: SITE + '/', description: 'Better life through mind, body and money.', inLanguage: 'en' },
     body: h,
   });
 }
 
-for (const name of ['Mind', 'Body', 'Money']) { // pillar pages
-  const P = PILLARS[name], list = POSTS.filter(p => p.pillar === name);
-  let h = `<div class='${COLORS[name]}'><section class='wrap pagehead'>${chip(name)}<h1 style='margin-top:18px'>${name}</h1><p>${P.line}</p></section>${line('margin-top:28px')}`;
-  h += `<section class='block'><div class='wrap'>${list.length ? feature(list[0]) + `<div class='grid'>${list.slice(1).map(card).join('')}</div>` : "<p class='empty'>New articles are on the way.</p>"}</div></section></div>`;
-  page('/' + P.key, P.key + '.html', { title: name, description: `${P.line} ${list.length} short, sourced articles from ${NAME}.`, og: P.key, body: h });
+for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations guide, then articles
+  const P = PILLARS[name], F = FOUNDATIONS[name], list = POSTS.filter(p => p.pillar === name);
+  let h = `<div class='${COLORS[name]}'><section class='wrap pagehead'>${chip(name)}<h1 style='margin-top:18px'>${name}</h1><p>${F.intro}</p>` +
+    `<nav class='toc' aria-label='On this page'>${F.sections.map(s => `<a href='#${s.id}'>${s.title}</a>`).join('')}<a href='#articles'>Articles</a></nav></section>${line('margin-top:28px')}`;
+  h += `<section class='block'><div class='wrap'><div class='fdn'>` +
+    F.sections.map((s, i) => `<section class='fdn-sec' id='${s.id}'><div class='fdn-side'><span class='num'>${String(i + 1).padStart(2, '0')}</span><h2>${s.title}</h2><p>${s.line}</p></div><div class='prose'>${s.html}</div></section>`).join('') +
+    `</div><p class='disclaimer'>Educational content only. Not medical or financial advice. Talk to a doctor or a licensed adviser before acting.</p></div></section>`;
+  h += `<section class='block band' id='articles'><div class='wrap'><div class='sechead'><h2>${name} articles</h2><a href='/articles'>All articles →</a></div>${list.length ? feature(list[0]) + `<div class='grid'>${list.slice(1).map(card).join('')}</div>` : "<p class='empty'>New articles are on the way.</p>"}</div></section></div>`;
+  const topics = F.sections.map(s => s.title.toLowerCase()).join(', ');
+  page('/' + P.key, P.key + '.html', { title: `${name}: ${F.sections.map(s => s.title).slice(0, 3).join(', ')}`, description: `${F.intro} Covers ${topics}.`.slice(0, 300), og: P.key, body: h });
 }
 
 { // all articles
@@ -231,25 +259,28 @@ for (const name of ['Mind', 'Body', 'Money']) { // pillar pages
   page('/guides', 'guides.html', { title: 'Free trading guides', description: 'Free Trading Guidelines and Risk Management Guide PDFs for PSX and crypto traders in Pakistan.', og: 'guides', body: h });
 }
 
-{ // about
-  let h = `<section class='wrap pagehead'><span class='eyebrow'>About</span><h1 style='margin-top:14px'>Discipline first. <span style='color:var(--mind)'>Then</span> everything else.</h1><p>${NAME} is run by Waseem Raja, a retired Pakistan Army officer who now writes about the habits, health and money rules that keep a life on track.</p></section>${line('margin-top:28px')}`;
-  h += `<section class='block'><div class='wrap split'><div><h2>Waseem's background</h2><p>Twenty-one years of service taught one lesson that carries into everything here: rules and routines beat moods. This site turns that into simple, sourced notes for mind, body and money.</p></div><ul class='facts'>` +
-    `<li><b>Service</b><span>Pakistan Army, 1999–2021. Retired as a Major after 21 years.</span></li>` +
-    `<li><b>Experience</b><span>Mechanised Forces, Infantry and Civil Armed Forces. Led teams of 200 to 700 people.</span></li>` +
-    `<li><b>UN mission</b><span>UN peacekeeping with UNMIL (United Nations Mission in Liberia), 2006–2007.</span></li>` +
-    `<li><b>Final post</b><span>Heavy Industries Taxila (HIT), 2018–2021, running major logistics and movement operations.</span></li>` +
-    `<li><b>Markets</b><span>About four years trading crypto and following the Pakistan Stock Exchange as a long-term investor.</span></li>` +
-    `<li><b>Based in</b><span>Rawalpindi / Islamabad, Pakistan.</span></li>` +
+{ // about: what the site is and why
+  let h = `<section class='wrap pagehead'><span class='eyebrow'>About</span><h1 style='margin-top:14px'>What <span style='color:var(--mind)'>The Growth Framework</span> is about.</h1><p>A simple, honest system for a better life, built on three pillars that hold each other up: a disciplined mind, a strong body and money with rules.</p></section>${line('margin-top:28px')}`;
+  h += `<section class='block'><div class='wrap split'><div><h2>Why this site exists</h2><p>Most advice treats health, mindset and money as separate problems. In real life they are one. A tired body makes worse money decisions. Money stress wrecks sleep and training. A mind without direction drifts on all three.</p><p>The Growth Framework puts them in one place, with one method: decide in advance, keep it small, and review every week. It is written for ambitious, busy people in Pakistan and South Asia who want clear, practical steps instead of hype.</p></div>` +
+    `<ul class='facts'>` +
+    `<li><b>Mind</b><span>Discipline, ambition and wellness: habits that hold up on low days, clear aims, and the sleep and stress basics that keep you going.</span></li>` +
+    `<li><b>Body</b><span>Physical activity, simple exercises, food values and what the body needs: protein, fibre, vitamins and minerals, electrolytes, and an honest look at adaptogens.</span></li>` +
+    `<li><b>Money</b><span>Rules before moods: an emergency fund first, then PSX investing, stocks, gold and crypto explained, plus PSX Alpha, our method for researching Pakistani companies.</span></li>` +
     `</ul></div></section>`;
-  h += `<section class='block' style='padding-top:0'><div class='wrap'><div class='sechead'><h2>Connect with Waseem</h2></div>${socials()}</div></section>`;
-  h += `<section class='block band'><div class='wrap'><div class='sechead'><h2>How we write</h2></div><div class='pillars'>` +
-    `<div class='pillar mind' style='min-height:0'><h3>Sourced</h3><p>Health facts come from trusted sources such as the NHS, Mayo Clinic, Harvard, NIH and USDA. No made-up numbers.</p></div>` +
-    `<div class='pillar body-p' style='min-height:0'><h3>Simple</h3><p>Short sentences, clear steps and one action you can take today.</p></div>` +
-    `<div class='pillar money' style='min-height:0'><h3>Honest</h3><p>No miracle cures and no get-rich promises. Educational content, never medical or financial advice.</p></div>` +
+  h += `<section class='block band'><div class='wrap'><div class='sechead'><h2>What you will find here</h2></div><div class='pillars'>` +
+    `<a class='pillar mind' href='/articles' style='min-height:0'><h3>Articles</h3><p>Short, sourced reads you can finish in five minutes, each ending with one action.</p></a>` +
+    `<a class='pillar body-p' href='/mind' style='min-height:0'><h3>Guides</h3><p>A foundations guide for each pillar, from discipline and sleep to vitamins, electrolytes, PSX, gold and crypto.</p></a>` +
+    `<a class='pillar money' href='/psx' style='min-height:0'><h3>PSX Alpha</h3><p>A repeatable way to read a Pakistani company's numbers before you read the headlines.</p></a>` +
     `</div></div></section>`;
+  h += `<section class='block'><div class='wrap'><div class='sechead'><h2>How we write</h2></div><div class='pillars'>` +
+    `<div class='pillar mind' style='min-height:0'><h3>Sourced</h3><p>Health facts follow trusted sources such as the WHO, NHS, NIH and Mayo Clinic. No made-up numbers.</p></div>` +
+    `<div class='pillar body-p' style='min-height:0'><h3>Simple</h3><p>Short sentences, clear steps and one action you can take today.</p></div>` +
+    `<div class='pillar money' style='min-height:0'><h3>Honest</h3><p>No miracle cures, no tips and no get-rich promises. Educational content, never medical or financial advice.</p></div>` +
+    `</div></div></section>`;
+  h += `<section class='block' style='padding-top:0'><div class='wrap'><div class='sechead'><h2>Follow and connect</h2></div>${socials()}</div></section>`;
   page('/about', 'about.html', {
-    title: 'About Waseem Raja', description: 'Waseem Raja is a retired Pakistan Army Major who writes about discipline, health and money rules at The Growth Framework.', og: 'about',
-    jsonld: { '@context': 'https://schema.org', '@type': 'Person', name: 'Waseem Raja', url: SITE + '/about', sameAs: SOCIAL.map(s => s.u) }, body: h,
+    title: 'About The Growth Framework', description: 'What The Growth Framework is about: one simple system for a better life across mind (discipline, ambition, wellness), body (exercise, nutrition, vitamins, electrolytes) and money (PSX, stocks, gold, crypto).', og: 'about',
+    jsonld: { '@context': 'https://schema.org', '@type': 'AboutPage', name: 'About ' + NAME, url: SITE + '/about', about: { '@type': 'Organization', name: NAME, url: SITE + '/', sameAs: SOCIAL.map(s => s.u) } }, body: h,
   });
 }
 
