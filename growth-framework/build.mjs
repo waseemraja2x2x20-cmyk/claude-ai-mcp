@@ -9,6 +9,7 @@ const SITE = 'https://thegrowthframework.live';
 const NAME = 'The Growth Framework';
 const IG = 'https://www.instagram.com/the_growth_frame_work/';
 const HANDLE = '@the_growth_frame_work';
+const CONTACT = 'https://ig.me/m/the_growth_frame_work'; // opens an Instagram message
 const OUT = 'dist';
 // Email sign-up (Supabase). Both values are public by design: the key can only ADD rows to the
 // subscribers table (see supabase/subscribers.sql). Leave empty to hide the form.
@@ -104,12 +105,13 @@ ${body}
     <div class="fgrid">
       <div>
         <a class="brand" href="/"><span class="dots" aria-hidden="true"><i style="background:var(--mind)"></i><i style="background:var(--body)"></i><i style="background:var(--money)"></i></span>${NAME}</a>
-        <p>Better life through mind, body and money. Simple, sourced notes for ambitious people in Pakistan and South Asia.</p>
+        <p class="ftag">Mind · Body · Money</p>
+        <p>Practical ideas for personal growth, physical wellbeing and financial awareness.</p>
+        <p class="fplace">Pakistan &amp; South Asia</p>
       </div>
-      <div><h4>Read</h4><ul><li><a href="/mind">Mind</a></li><li><a href="/body">Body</a></li><li><a href="/money">Money</a></li><li><a href="/psx">PSX Alpha</a></li><li><a href="/articles">All articles</a></li></ul></div>
-      <div><h4>Connect</h4><ul>${SOCIAL.map(s => `<li><a href="${s.u}" target="_blank" rel="noopener">${s.n === 'Instagram' ? 'Instagram ' + HANDLE : s.n}</a></li>`).join('')}<li><a href="/guides">Free guides</a></li><li><a href="/about">About Waseem</a></li></ul></div>
+      <div><h4>Explore</h4><ul><li><a href="/mind">Mind</a></li><li><a href="/body">Body</a></li><li><a href="/money">Money</a></li><li><a href="/psx">PSX Alpha</a></li><li><a href="/articles">Articles</a></li><li><a href="/guides">Guides</a></li></ul></div>
+      <div><h4>Connect</h4><ul><li><a href="${IG}" target="_blank" rel="noopener">Instagram</a></li><li><a href="${CONTACT}" target="_blank" rel="noopener">Contact</a></li><li><a href="/about">About</a></li></ul></div>
     </div>
-    ${shareBar(url(path), path === '/' ? NAME + ': better life through mind, body and money' : title + ' · ' + NAME, path === '/' ? 'Share the site' : 'Share this page')}
     <p class="fine">Educational content only. Not medical or financial advice. Talk to a doctor or a licensed adviser before acting. © <span id="yr">${new Date().getFullYear()}</span> ${NAME} · thegrowthframework.live</p>
   </div>
 </footer>
@@ -170,52 +172,105 @@ const page = (path, file, opts) => pages.push({ path, file, html: layout({ path,
 const LEGACY = { home: '/', mind: '/mind', body: '/body', money: '/money', psx: '/psx', guides: '/guides', about: '/about', all: '/articles' };
 const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||h==='latest')return;var R=${JSON.stringify(LEGACY)},S=${JSON.stringify(POSTS.map(p => p.slug))};var t=R[h]||(S.indexOf(h)>=0?'/articles/'+h:null);if(t&&t!=='/')location.replace(t+location.search)})();</script>\n`;
 
-{ // home
-  const latest = POSTS.slice(0, 7);
-  // Hero: three overlapping circles, one per pillar, meeting in the middle.
+{ // home: landing page (copy supplied by the site owner)
   const venn = `<svg class='venn' viewBox='0 0 400 380' role='img' aria-labelledby='venn-t'><title id='venn-t'>Mind, Body and Money overlap. Growth happens where they meet.</title>` +
     `<g class='rings'><circle class='c-mind' cx='200' cy='130' r='112'/><circle class='c-body' cx='138' cy='240' r='112'/><circle class='c-money' cx='262' cy='240' r='112'/></g>` +
     `<text x='200' y='88' class='vl l-mind'>MIND</text><text x='98' y='282' class='vl l-body'>BODY</text><text x='302' y='282' class='vl l-money'>MONEY</text>` +
     `<text x='200' y='212' class='vl l-you'>YOU</text></svg>`;
+  const list = items => `<ul class='chips'>${items.map(t => `<li>${t}</li>`).join('')}</ul>`;
+  const P3 = [
+    ['Mind', 'mind', 'Think clearly. Build discipline. Understand your patterns.'],
+    ['Body', 'body', 'Move better. Eat better. Build a healthier lifestyle.'],
+    ['Money', 'money', 'Build financial awareness. Follow rules. Think long term.'],
+  ];
+
+  // 1. Hero
   let h = `<section class='hero hero-x'><div class='wrap hero-grid'><div>` +
-    `<span class='eyebrow'>${HANDLE} · Pakistan</span>` +
-    `<h1 style='margin-top:16px'>Grow your <span class='m'>mind</span>, <span class='b'>body</span> &amp; <span class='y'>money</span>. Together.</h1>` +
-    `<p class='lead'>The Growth Framework is a simple system for a better life: discipline and clear aims for the mind, movement and real food for the body, and rules-first investing for your money. Plain language, sourced facts, built for Pakistan and South Asia.</p>` +
-    `<div class='ctas'><a class='btn solid' href='#framework'>Explore the framework</a><a class='btn ghost' href='#latest'>Read the latest</a></div>` +
-    `</div><div class='hero-venn' aria-hidden='false'>${venn}</div></div><div class='giant' aria-hidden='true'>GROW</div></section>`;
+    `<span class='eyebrow'>The Growth Framework</span>` +
+    `<h1 style='margin-top:16px'>Grow Your <span class='m'>Mind.</span> <span class='b'>Body.</span> <span class='y'>Money.</span> Together.</h1>` +
+    `<p class='lead'>A practical framework for building a better life — through clearer thinking, a stronger body, and smarter financial decisions.</p>` +
+    `<p class='hero-note'>Built for real life. Built for Pakistan and South Asia.</p>` +
+    `<div class='ctas'><a class='btn solid' href='#framework'>Explore the Framework</a><a class='btn ghost' href='#start'>Start Your Growth Journey</a></div>` +
+    `</div><div class='hero-venn'>${venn}</div></div><div class='giant' aria-hidden='true'>GROW</div></section>`;
   h += line();
-  // Manifesto: why the three belong together.
-  h += `<section class='block manifesto'><div class='wrap'><p class='eyebrow'>Why one framework</p><div class='mf'>` +
-    `<p><span class='acc-b'>A tired body</span> makes worse decisions.</p><p><span class='acc-m'>A stressed mind</span> skips training.</p><p><span class='acc-y'>Money pressure</span> wears down both.</p>` +
-    `</div><p class='mf-end'>So we work on all three, with the same method: <b>decide in advance, keep it small, review every week.</b></p></div></section>`;
-  // Framework explorer: tabs per pillar, each topic links to its section on the pillar page.
-  h += `<section class='block band' id='framework'><div class='wrap'><div class='sechead'><h2>The framework</h2><span class='meta'>Tap a pillar to explore</span></div>` +
-    `<div class='tabs' role='tablist' aria-label='Pillars'>` +
-    ['Mind', 'Body', 'Money'].map((n, i) => `<button type='button' role='tab' class='tab ${COLORS[n]}' id='tab-${PILLARS[n].key}' aria-controls='panel-${PILLARS[n].key}' aria-selected='${i === 0}'><i class='dot'></i>${n}</button>`).join('') +
-    `</div>`;
-  for (const n of ['Mind', 'Body', 'Money']) {
-    const P = PILLARS[n], F = FOUNDATIONS[n];
-    h += `<div class='panel ${COLORS[n]}' role='tabpanel' id='panel-${P.key}' aria-labelledby='tab-${P.key}'>` +
-      `<div class='panel-head'><h3>${n}</h3><p>${F.intro}</p></div><div class='topics'>` +
-      F.sections.map((s, i) => `<a class='topic' href='/${P.key}#${s.id}'><span class='num'>${String(i + 1).padStart(2, '0')}</span><b>${s.title}</b><span>${s.line}</span></a>`).join('') +
-      `</div><a class='btn ghost panel-more' href='/${P.key}'>Read the full ${n} guide →</a></div>`;
-  }
-  h += `</div></section>`;
-  // Start this week: one small action per pillar (checkbox state kept in the viewer's browser).
-  h += `<section class='block'><div class='wrap split'><div><span class='eyebrow'>Start this week</span><h2 style='margin-top:12px'>Three small actions. One per pillar.</h2><p>Keep each one so small you can do it on a bad day. Tick them off as you go. Your ticks stay on this device.</p></div>` +
-    `<ul class='starter'>` +
-    [['mind', 'Mind', 'Set one fixed wake-up time and keep it for seven days.'], ['body-p', 'Body', 'Walk 20 minutes a day, and add a vegetable to one meal.'], ['money', 'Money', 'Write down every expense for one week, then set an automatic monthly saving.']]
-      .map(([c, n, t], i) => `<li class='${c}'><label><input type='checkbox' data-starter='${i}'><span class='box'></span><span><b>${n}.</b> ${t}</span></label></li>`).join('') +
-    `</ul></div></section>`;
-  h += `<section class='block' id='latest' style='padding-top:0'><div class='wrap'><div class='sechead'><h2>Latest articles</h2><a href='/articles'>All ${POSTS.length} articles →</a></div>${feature(latest[0])}<div class='grid'>${latest.slice(1).map(card).join('')}</div></div></section>`;
-  h += psxBand(true);
-  h += `<section class='block'><div class='wrap'><div class='sechead'><h2>Follow along</h2><a href='${IG}' target='_blank' rel='noopener'>${HANDLE} →</a></div><p style='color:var(--muted);margin:-12px 0 24px;max-width:40em'>New carousels and Reels every day on Instagram. Career and markets updates on LinkedIn.</p>${igEmbeds()}${socials()}</div></section>`;
-  h += `<section class='block band'><div class='wrap split'><div><span class='eyebrow'>Free</span><h2 style='margin-top:12px'>Free trading guides</h2></div><div><p>Get the <b>Trading Guidelines</b> and <b>Risk Management Guide</b> PDFs for free. Comment <b>GUIDE</b> on any trading post on Instagram and the guide is sent to you.</p><div class='ctas'><a class='btn ${SIGNUP.url ? 'ghost' : 'solid'}' href='/guides'>See the guides</a></div>${signupForm('home')}</div></div></section>`;
+
+  // 2. You need a system
+  h += `<section class='block'><div class='wrap'><div class='statement'><h2>You Don't Need Another Motivation Speech.</h2><p class='big-line'>You need a <span class='grad'>system.</span></p>` +
+    `<p>Life doesn't improve because we know more.<br>It improves when we turn knowledge into better decisions, better habits, and consistent action.</p>` +
+    `<p class='muted'>The Growth Framework brings three areas together:</p>` +
+    `<ul class='trio'>${P3.map(([n, k, t]) => `<li class='${COLORS[n]}'><a href='#pillar-${k}'><b>${n}</b><span>${t}</span></a></li>`).join('')}</ul></div></div></section>`;
+
+  // 3. One section per pillar
+  const deep = [
+    ['Mind', 'mind', 'Change the Pattern Before You Change the Result.',
+      ['Your decisions are influenced by habits, emotions, environment, expectations and the way you interpret events.', 'We explore practical ideas around:'],
+      ['Discipline', 'Habits', 'Decision-making', 'Psychology', 'Focus', 'Patience', 'Emotional control', 'Personal growth', 'Breaking unhelpful patterns'],
+      'Understand yourself. Then build better systems.'],
+    ['Body', 'body', 'Your Body Is Part of the Framework.',
+      ["A better life isn't only about financial success or mental performance.", 'Your physical health matters too.', 'We focus on practical, sustainable approaches to:'],
+      ['Movement', 'Strength', 'Fitness', 'Nutrition', 'Recovery', 'Sleep', 'Healthy routines', 'Long-term wellbeing'],
+      'No extreme promises. No shortcuts. Just practical improvement.'],
+    ['Money', 'money', 'Make Financial Decisions With Rules, Not Noise.',
+      ['Markets are full of opinions.', 'We focus on understanding the principles behind financial decisions.', 'Explore:'],
+      ['Investing fundamentals', 'Asset classes', 'Risk management', 'Market behaviour', 'Long-term wealth building', 'Trading psychology', 'Financial mistakes', 'Investment frameworks', 'Pakistan &amp; global markets'],
+      'Learn the rules before taking the risk.'],
+  ];
+  deep.forEach(([n, k, title, paras, items, close], i) => {
+    h += `<section class='block pdeep ${COLORS[n]}${i % 2 ? ' band' : ''}' id='pillar-${k}'><div class='wrap split'>` +
+      `<div><span class='chip'><i></i>${n}</span><h2 style='margin-top:16px'>${title}</h2>${paras.map(p => `<p>${p}</p>`).join('')}</div>` +
+      `<div>${list(items)}<p class='close-line'>${close}</p><div class='ctas'><a class='btn solid' href='/${k}'>Explore ${n}</a></div></div></div></section>`;
+  });
+
+  // 4. The framework
+  h += `<section class='block' id='framework'><div class='wrap split'><div><span class='eyebrow'>The Framework</span><h2 style='margin-top:12px'>Three Areas. One Life.</h2>` +
+    `<p>Mind, Body and Money are often treated as separate subjects.</p><p class='big-line' style='font-size:clamp(28px,3.4vw,40px)'>They aren't.</p>` +
+    `<p>Your financial decisions can affect your stress.<br>Your physical condition can affect your energy.<br>Your habits can affect both.</p>` +
+    `<p>That's why The Growth Framework looks at them together.</p></div>` +
+    `<ol class='flow'><li class='mind'><b>Mind</b><span>How you think.</span></li><li class='body-p'><b>Body</b><span>How you live.</span></li><li class='money'><b>Money</b><span>How you build and protect resources.</span></li><li class='flow-end'><b>A More Complete Approach to Growth.</b></li></ol></div></section>`;
+
+  // 5. Built for Pakistan & South Asia
+  h += `<section class='block band'><div class='wrap split'><div><span class='eyebrow'>Built for Pakistan &amp; South Asia</span>` +
+    `<h2 style='margin-top:12px'>Global knowledge. Local context. Practical application.</h2>` +
+    `<p>Most personal-development and financial content is created for someone else's environment.</p><p>Our goal is different.</p>` +
+    `<p>We want to translate useful ideas into practical conversations relevant to people living in Pakistan and South Asia.</p></div>` +
+    `<div><p class='muted'>That means considering:</p>${list(['Local financial realities', "Pakistan's investment environment", 'Regional lifestyle and food habits', 'Cultural expectations', 'Family responsibilities', 'Career realities', 'Financial uncertainty', 'Access to fitness and wellbeing resources'])}</div></div></section>`;
+
+  // 6. Our principle
+  h += `<section class='block'><div class='wrap'><div class='statement'><span class='eyebrow'>Our Principle</span><h2 style='margin-top:12px'>Learn. Test. Reflect. Improve.</h2>` +
+    `<p>We don't believe every popular idea is automatically correct.</p><p class='muted'>We look for:</p></div>` +
+    `<ol class='chain'>${['Evidence', 'Understanding', 'Experimentation', 'Reflection', 'Improvement'].map(t => `<li>${t}</li>`).join('')}</ol>` +
+    `<div class='statement'><p>Some ideas will work for you.<br>Some won't.</p><p>The goal isn't perfection.</p><p class='big-line' style='font-size:clamp(26px,3vw,36px)'>The goal is progress that <span class='grad'>compounds.</span></p></div></div></section>`;
+
+  // 7. What you'll find here
+  const find = [
+    ['Articles', 'Practical ideas about mindset, fitness, investing and everyday decisions.', '/articles', 'mind'],
+    ['Guides', 'Simple frameworks that turn complicated subjects into understandable steps.', '/guides', 'body-p'],
+    ['Market &amp; Money Education', 'Learn financial concepts without unnecessary jargon.', '/money', 'money'],
+    ['Fitness &amp; Wellbeing', 'Practical approaches to building a stronger, healthier lifestyle.', '/body', 'body-p'],
+  ];
+  h += `<section class='block band'><div class='wrap'><div class='sechead'><h2>What You'll Find Here</h2></div><div class='find'>` +
+    find.map(([t, d, href, c]) => `<a class='fcard ${c}' href='${href}'><h3>${t}</h3><p>${d}</p></a>`).join('') + `</div></div></section>`;
+
+  // 8. What it is not
+  h += `<section class='block'><div class='wrap'><div class='nots'><p class='not-lead'>Not a get-rich-quick system.</p><p>Not a motivational cult.</p><p>Not financial advice.</p><p>Not a promise of overnight transformation.</p></div>` +
+    `<p class='nots-end'>The Growth Framework is about learning how to make better decisions and building systems that can survive real life.</p></div></section>`;
+
+  // 9. Start with one area
+  h += `<section class='block band' id='start'><div class='wrap'><div class='statement'><span class='eyebrow'>Start Here</span><h2 style='margin-top:12px'>Start With One Area.</h2><p>You don't have to change everything at once.<br>Choose where you want to begin.</p></div>` +
+    `<div class='pcards'>${[['Mind', 'mind', 'Build clarity, discipline and better patterns.'], ['Body', 'body', 'Build movement, fitness and healthier routines.'], ['Money', 'money', 'Build financial knowledge and better decision-making.']]
+      .map(([n, k, d]) => `<div class='pcard ${COLORS[n]}'><span class='chip'><i></i>${n}</span><p>${d}</p><a class='btn solid' href='/${k}'>Start With ${n} →</a></div>`).join('')}</div></div></section>`;
+
+  // 10. Closing
+  h += `<section class='block closing'><div class='wrap'><span class='eyebrow'>Grow Differently.</span>` +
+    `<h2 style='margin-top:14px'>Your life doesn't need another complicated formula.</h2><p class='big-line'>It needs better patterns.<br>Better decisions.<br>Better habits.<br><span class='muted-inline'>Repeated consistently.</span></p>` +
+    `<p class='closing-pillars'><span class='m'>Mind.</span> <span class='b'>Body.</span> <span class='y'>Money.</span> Together.</p>` +
+    `<div class='ctas' style='justify-content:center'><a class='btn solid' href='#framework'>Explore the Framework</a></div></div></section>`;
+
   page('/', 'index.html', {
-    title: NAME + ' · Mind, Body & Money',
-    description: 'A simple system for a better life: discipline and ambition for the mind, exercise, nutrition, vitamins and electrolytes for the body, and PSX, stocks, gold and crypto explained for your money.',
+    title: NAME + ' · Grow Your Mind, Body & Money',
+    description: 'A practical framework for building a better life — through clearer thinking, a stronger body, and smarter financial decisions. Built for Pakistan and South Asia.',
     head: legacyRedirect,
-    jsonld: { '@context': 'https://schema.org', '@type': 'WebSite', name: NAME, url: SITE + '/', description: 'Better life through mind, body and money.', inLanguage: 'en' },
+    jsonld: { '@context': 'https://schema.org', '@type': 'WebSite', name: NAME, url: SITE + '/', description: 'A practical framework for building a better life through mind, body and money.', inLanguage: 'en' },
     body: h,
   });
 }
