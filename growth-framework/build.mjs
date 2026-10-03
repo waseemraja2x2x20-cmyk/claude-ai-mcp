@@ -16,6 +16,14 @@ const OUT = 'dist';
 const SIGNUP = { url: 'https://aibiwpuuslqjzkhzddph.supabase.co', key: 'sb_publishable_e68hLJbVfvZlwlmfbG-6LA_NTSffny_' };
 
 const COLORS = { Mind: 'mind', Body: 'body-p', Money: 'money' };
+// Breaking Patterns: articles on behaviour, mistakes, decision-making, FOMO and discipline.
+const PATTERNS = ['panic-selling-after-a-market-fall', 'procrastination-is-a-mood-problem', 'fomo-buying-after-the-run', 'sunk-cost-trap', 'discipline-vs-motivation', 'how-habits-form', 'decision-journal', 'crypto-and-psx-risk', 'one-page-trade-plan'];
+// Success Stories series, in publishing order (Part 1 first). Add new stories to the end.
+const STORIES = ['careem-from-karachi-to-uber', 'airbnb-air-mattresses-to-global', 'jack-dorsey-twitter-square-block', 'elon-musk-risk-and-failure', 'cz-binance-fast-growth-and-rules', 'jensen-huang-nvidia-long-bets', 'jeff-bezos-amazon-long-term'];
+const storyPart = slug => STORIES.indexOf(slug) + 1;
+// Home page picks. FEATURED is the lead story. MOST_READ is hand-picked until real view counts are available.
+const FEATURED = 'why-one-framework';
+const MOST_READ = ['five-numbers-before-a-psx-stock', 'inflation-explained', 'protein-pakistani-plate', 'how-habits-form', 'gold-in-pakistan-basics'];
 const PSX = ['what-is-psx-alpha', 'five-numbers-before-a-psx-stock', 'index-is-not-your-portfolio', 'crypto-and-psx-risk', 'one-page-trade-plan'];
 // Topic links on the pillar cards. Each one points at a real page.
 const PILLARS = {
@@ -38,7 +46,7 @@ const SOCIAL = [
   { n: 'Facebook', h: HANDLE, u: 'https://www.facebook.com/the_growth_frame_work', k: 'f', bg: '#1877f2' },
   { n: 'LinkedIn', h: 'Muhammad Waseem Raja', u: 'https://www.linkedin.com/in/muhammad-waseem-raja-848a25323/', k: 'in', bg: '#0a66c2' },
 ];
-const NAV = [['/mind', 'Mind'], ['/body', 'Body'], ['/money', 'Money'], ['/psx', 'PSX Alpha'], ['/guides', 'Free guides'], ['/about', 'About']];
+const NAV = [['/mind', 'Mind'], ['/body', 'Body'], ['/money', 'Money'], ['/patterns', 'Patterns'], ['/stories', 'Stories'], ['/psx', 'PSX'], ['/guides', 'Guides'], ['/about', 'About']];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -102,17 +110,13 @@ ${body}
 </main>
 <footer>
   <div class="wrap">
-    <div class="fgrid">
-      <div>
-        <a class="brand" href="/"><span class="dots" aria-hidden="true"><i style="background:var(--mind)"></i><i style="background:var(--body)"></i><i style="background:var(--money)"></i></span>${NAME}</a>
-        <p class="ftag">Mind · Body · Money</p>
-        <p>Practical ideas for personal growth, physical wellbeing and financial awareness.</p>
-        <p class="fplace">Pakistan &amp; South Asia</p>
-      </div>
-      <div><h4>Explore</h4><ul><li><a href="/mind">Mind</a></li><li><a href="/body">Body</a></li><li><a href="/money">Money</a></li><li><a href="/psx">PSX Alpha</a></li><li><a href="/articles">Articles</a></li><li><a href="/guides">Guides</a></li></ul></div>
-      <div><h4>Connect</h4><ul><li><a href="${IG}" target="_blank" rel="noopener">Instagram</a></li><li><a href="${CONTACT}" target="_blank" rel="noopener">Contact</a></li><li><a href="/about">About</a></li></ul></div>
+    <div class="fsimple">
+      <a class="brand" href="/"><span class="dots" aria-hidden="true"><i style="background:var(--mind)"></i><i style="background:var(--body)"></i><i style="background:var(--money)"></i></span>${NAME}</a>
+      <p class="ftag">Mind · Body · Money</p>
+      <nav class="flinks" aria-label="Footer"><a href="/about">About</a><a href="/articles">Articles</a><a href="/guides">Guides</a><a href="${CONTACT}" target="_blank" rel="noopener">Contact</a></nav>
+      <p class="fplace">Pakistan &amp; South Asia</p>
     </div>
-    <p class="fine">Educational content only. Not medical or financial advice. Talk to a doctor or a licensed adviser before acting. © <span id="yr">${new Date().getFullYear()}</span> ${NAME} · thegrowthframework.live</p>
+    <p class="fine">© <span id="yr">${new Date().getFullYear()}</span> ${NAME} · Educational content only. Not medical or financial advice.</p>
   </div>
 </footer>
 <script src="${JS_SRC}" defer></script>
@@ -168,7 +172,7 @@ const GALLERY = [['yoga', 'Yoga at sunrise'], ['hiking', 'Hiking in the north'],
 const MIND_GALLERY = [['meditate', 'Stillness at sunrise'], ['journal', 'Plan the week on paper'], ['brain', 'Train the mind like a muscle']];
 const gallery = (list = GALLERY) => { const g = list.filter(([k]) => existsSync(`public/img/${k}.jpg`)); return g.length ? `<div class='gallery'>${g.map(([k, c]) => `<figure><img src='/img/${k}.jpg' alt='${c}' loading='lazy' decoding='async' width='800' height='450'><figcaption>${c}</figcaption></figure>`).join('')}</div>` : ''; };
 // Header photo for articles where one fits.
-const ARTICLE_PHOTO = { 'inflation-explained': 'money', 'emergency-fund-first': 'money', 'gold-in-pakistan-basics': 'money', 'protein-pakistani-plate': 'body', 'hydration-in-the-heat': 'hiking', 'how-habits-form': 'journal', 'discipline-vs-motivation': 'meditate', 'longevity-basics': 'longevity', 'walk-every-day': 'hiking', 'strength-twice-a-week': 'body', 'steady-sleep-and-wake-time': 'yoga', 'longevity-and-money': 'longevity', 'one-focused-block': 'mind', 'sunday-review': 'mind', 'decision-journal': 'mind', 'why-one-framework': 'mind', 'what-is-psx-alpha': 'money', 'five-numbers-before-a-psx-stock': 'money', 'index-is-not-your-portfolio': 'money', 'one-page-trade-plan': 'money', 'crypto-and-psx-risk': 'money' };
+const ARTICLE_PHOTO = { 'careem-from-karachi-to-uber': 'money', 'airbnb-air-mattresses-to-global': 'journal', 'jack-dorsey-twitter-square-block': 'brain', 'elon-musk-risk-and-failure': 'mind', 'cz-binance-fast-growth-and-rules': 'money', 'jensen-huang-nvidia-long-bets': 'brain', 'jeff-bezos-amazon-long-term': 'journal', 'fat-loss-myths': 'body', 'panic-selling-after-a-market-fall': 'money', 'pay-yourself-first-system': 'journal', 'fibre-the-missing-nutrient': 'longevity', 'procrastination-is-a-mood-problem': 'journal', 'sleep-debt-explained': 'yoga', 'cardio-vs-strength-training': 'body', 'dividend-yield-explained': 'money', 'fomo-buying-after-the-run': 'brain', 'sunk-cost-trap': 'journal', 'inflation-explained': 'money', 'emergency-fund-first': 'money', 'gold-in-pakistan-basics': 'money', 'protein-pakistani-plate': 'body', 'hydration-in-the-heat': 'hiking', 'how-habits-form': 'journal', 'discipline-vs-motivation': 'meditate', 'longevity-basics': 'longevity', 'walk-every-day': 'hiking', 'strength-twice-a-week': 'body', 'steady-sleep-and-wake-time': 'yoga', 'longevity-and-money': 'longevity', 'one-focused-block': 'mind', 'sunday-review': 'mind', 'decision-journal': 'mind', 'why-one-framework': 'mind', 'what-is-psx-alpha': 'money', 'five-numbers-before-a-psx-stock': 'money', 'index-is-not-your-portfolio': 'money', 'one-page-trade-plan': 'money', 'crypto-and-psx-risk': 'money' };
 // Compounding chart: real arithmetic (monthly saving, assumed yearly return), not market data.
 function compoundChart() {
   const P = 10000, rate = 0.10 / 12, years = 20, W = 640, H = 300, pad = { l: 56, r: 16, t: 16, b: 34 };
@@ -199,10 +203,10 @@ const pages = [];
 const page = (path, file, opts) => pages.push({ path, file, html: layout({ path, ...opts }) });
 
 // Old links used #fragments (e.g. /#five-numbers-before-a-psx-stock). Send them to the new pages.
-const LEGACY = { home: '/', mind: '/mind', body: '/body', money: '/money', psx: '/psx', guides: '/guides', about: '/about', all: '/articles' };
+const LEGACY = { home: '/', framework: '/framework', patterns: '/patterns', stories: '/stories', mind: '/mind', body: '/body', money: '/money', psx: '/psx', guides: '/guides', about: '/about', all: '/articles' };
 const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||h==='latest')return;var R=${JSON.stringify(LEGACY)},S=${JSON.stringify(POSTS.map(p => p.slug))};var t=R[h]||(S.indexOf(h)>=0?'/articles/'+h:null);if(t&&t!=='/')location.replace(t+location.search)})();</script>\n`;
 
-{ // home: landing page (copy supplied by the site owner)
+{ // /framework: the full framework story (landing copy supplied by the site owner)
   const venn = `<svg class='venn' viewBox='0 0 400 380' role='img' aria-labelledby='venn-t'><title id='venn-t'>Mind, Body and Money overlap. Growth happens where they meet.</title>` +
     `<g class='rings'><circle class='c-mind' cx='200' cy='130' r='112'/><circle class='c-body' cx='138' cy='240' r='112'/><circle class='c-money' cx='262' cy='240' r='112'/></g>` +
     `<text x='200' y='88' class='vl l-mind'>MIND</text><text x='98' y='282' class='vl l-body'>BODY</text><text x='302' y='282' class='vl l-money'>MONEY</text>` +
@@ -335,13 +339,101 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
     `<p class='closing-pillars'><span class='m'>Mind.</span> <span class='b'>Body.</span> <span class='y'>Money.</span> Together.</p>` +
     `<div class='ctas' style='justify-content:center'><a class='btn solid' href='#framework'>Explore the Framework</a></div></div></section>`;
 
-  page('/', 'index.html', {
-    title: NAME + ' · Grow Your Mind, Body & Money',
+  page('/framework', 'framework.html', {
+    title: 'The Framework: Mind, Body and Money together',
     description: 'A practical framework for building a better life — through clearer thinking, a stronger body, and smarter financial decisions. Built for Pakistan and South Asia.',
-    head: legacyRedirect,
-    jsonld: { '@context': 'https://schema.org', '@type': 'WebSite', name: NAME, url: SITE + '/', description: 'A practical framework for building a better life through mind, body and money.', inLanguage: 'en' },
     body: h,
   });
+}
+
+{ // home: magazine front page
+  const bySlug = s => POSTS.find(p => p.slug === s);
+  const num = i => String(i + 1).padStart(2, '0');
+  const ph = (p, cls = '') => { const k = ARTICLE_PHOTO[p.slug]; return k && existsSync(`public/img/${k}.jpg`) ? `<img class='${cls}' src='/img/${k}.jpg' alt='' loading='lazy' decoding='async' width='800' height='450'>` : ''; };
+  const stars = Array.from({ length: 46 }, (_, i) => { const x = (i * 37.3) % 100, y = (i * 53.7) % 62, d = (i % 7) * .6, s = 1 + (i % 3); return `<i style='left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s}px;height:${s}px;animation-delay:${d}s'></i>`; }).join('');
+  const venn = `<svg class='venn' viewBox='0 0 400 380' role='img' aria-labelledby='venn-h'><title id='venn-h'>Mind, Body and Money overlap. Growth happens where they meet.</title>` +
+    `<g class='rings'><circle class='c-mind' cx='200' cy='130' r='112'/><circle class='c-body' cx='138' cy='240' r='112'/><circle class='c-money' cx='262' cy='240' r='112'/></g>` +
+    `<text x='200' y='88' class='vl l-mind'>MIND</text><text x='98' y='282' class='vl l-body'>BODY</text><text x='302' y='282' class='vl l-money'>MONEY</text><text x='200' y='212' class='vl l-you'>YOU</text></svg>`;
+
+  // Hero
+  let h = `<section class='hero hero-x home-hero'><div class='scifi' aria-hidden='true'><div class='stars'>${stars}</div><div class='horizon'></div><div class='neongrid'></div></div><div class='wrap hero-grid'><div>` +
+    `<span class='eyebrow'>The Growth Framework</span>` +
+    `<h1 style='margin-top:16px'>Grow Your <span class='m'>Mind.</span> <span class='b'>Body.</span> <span class='y'>Money.</span> Together.</h1>` +
+    `<div class='pillbtns'>${[['Mind', 'mind'], ['Body', 'body'], ['Money', 'money']].map(([n, k]) => `<a class='pillbtn ${COLORS[n]}' href='/${k}'><i></i>${n}</a>`).join('')}</div>` +
+    `</div><div class='hero-venn'>${venn}</div></div></section>`;
+
+  // Featured
+  const f = bySlug(FEATURED) || POSTS[0];
+  h += `<section class='block'><div class='wrap'><span class='eyebrow'>Featured</span><a class='featured ${COLORS[f.pillar]}' href='${postUrl(f)}'>${ph(f, 'featured-img')}<div class='featured-body'>${chip(f.pillar)}<h2>${esc(f.title)}</h2><p>${esc(f.lede)}</p><span class='readmore'>Read Article →</span></div></a></div></section>`;
+
+  // Mind, Body, Money: latest four each
+  ['Mind', 'Body', 'Money'].forEach((n, i) => {
+    const k = PILLARS[n].key, list = POSTS.filter(p => p.pillar === n).slice(0, 4), pp = photo(k);
+    h += `<section class='block pillar-latest ${COLORS[n]}${i % 2 ? '' : ' band'}' id='latest-${k}'><div class='wrap pl-grid'>` +
+      `<div class='pl-head'><h2 class='pl-title'>${n}</h2><span class='eyebrow'>Latest Articles</span>${pp.cls ? `<div class='pl-photo'${pp.style}></div>` : ''}<a class='viewall' href='/${k}#articles'>View All ${n} Articles →</a></div>` +
+      `<ol class='numlist'>${list.map((p, j) => `<li><a href='${postUrl(p)}'><span class='n'>${num(j)}</span><div><h3>${esc(p.title)}</h3><p>${esc(p.lede)}</p></div></a></li>`).join('')}</ol></div></section>`;
+  });
+
+  // Breaking Patterns
+  const bp = PATTERNS.map(bySlug).filter(Boolean).slice(0, 3), bph = photo('brain');
+  h += `<section class='block patterns-sec${bph.cls}'${bph.style}><div class='wrap'><span class='eyebrow'>Breaking Patterns</span><h2 class='sec-title'>Breaking Patterns</h2>` +
+    `<p class='sec-lead'>Behaviour, mistakes, decision-making, FOMO, discipline and lessons from real life.</p>` +
+    `<div class='bp-cards'>${bp.map(p => `<a class='bp-card' href='${postUrl(p)}'><h3>${esc(p.title)}</h3><span class='meta'>${p.read} min read</span></a>`).join('')}</div>` +
+    `<a class='btn solid' href='/patterns' style='margin-top:26px'>Explore Breaking Patterns →</a></div></section>`;
+
+  // Success Stories
+  const st = STORIES.map(bySlug).filter(Boolean).slice(-3).reverse();
+  h += `<section class='block band stories-sec'><div class='wrap'><span class='eyebrow'>Success Stories</span><h2 class='sec-title'>Success Stories</h2>` +
+    `<p class='sec-lead'>Founders who turned small ideas into big companies, told with the setbacks included, and the lessons you can actually use.</p>` +
+    `<div class='bp-cards'>${st.map(p => `<a class='bp-card story-card' href='${postUrl(p)}'><span class='part'>Part ${storyPart(p.slug)}</span><h3>${esc(p.title)}</h3><span class='meta'>${p.read} min read</span></a>`).join('')}</div>` +
+    `<a class='btn solid' href='/stories' style='margin-top:26px'>Explore Success Stories →</a></div></section>`;
+
+  // Practical guides
+  h += `<section class='block'><div class='wrap'><span class='eyebrow'>Practical Guides</span><h2 class='sec-title'>Practical Guides</h2><p class='sec-lead'>Longer, evergreen guides you can come back to.</p><div class='gcols'>` +
+    ['Mind', 'Body', 'Money'].map(n => { const k = PILLARS[n].key; return `<div class='gcol ${COLORS[n]}'><h3>${n} Guides</h3><ul>${FOUNDATIONS[n].sections.slice(0, 3).map(s => `<li><a href='/${k}#${s.id}'>${s.title}</a></li>`).join('')}</ul></div>`; }).join('') +
+    `</div><a class='viewall' href='/guides'>Explore All Guides →</a></div></section>`;
+
+  // Most read + Latest
+  const mr = MOST_READ.map(bySlug).filter(Boolean);
+  h += `<section class='block band'><div class='wrap split mr-split'><div><span class='eyebrow'>Most Read</span><h2 class='sec-title'>Most Read</h2><ol class='mostread'>${mr.map((p, j) => `<li class='${COLORS[p.pillar]}'><a href='${postUrl(p)}'><span class='n'>${num(j)}</span><b>${esc(p.title)}</b></a></li>`).join('')}</ol></div>` +
+    `<div><span class='eyebrow'>Latest</span><h2 class='sec-title'>Latest</h2><ul class='latest'>${POSTS.slice(0, 6).map(p => `<li class='${COLORS[p.pillar]}'><a href='${postUrl(p)}'><i class='dot'></i><b>${esc(p.title)}</b><span class='meta'>${fmt(p.date)} · ${p.pillar}</span></a></li>`).join('')}</ul><a class='viewall' href='/articles'>View All Articles →</a></div></div></section>`;
+
+  // About the framework
+  h += `<section class='block'><div class='wrap'><span class='eyebrow'>About the Framework</span><h2 class='sec-title'>Three areas. One life.</h2><div class='whys'>` +
+    [['Mind', 'Why Mind?', 'Every result starts with a decision. Clear thinking, discipline and better patterns make every other change possible.'],
+     ['Body', 'Why Body?', 'Energy, health and focus come from how you move, eat and sleep. A strong body supports a strong mind.'],
+     ['Money', 'Why Money?', 'Financial stress affects sleep, health and choices. Rules and long-term thinking protect your future.']]
+      .map(([n, t, d]) => `<div class='why ${COLORS[n]}'><h3>${t}</h3><p>${d}</p></div>`).join('') +
+    `</div><div class='ctas'><a class='btn solid' href='/about'>Learn About The Growth Framework →</a><a class='btn ghost' href='/framework'>See the full framework</a></div></div></section>`;
+
+  // Follow the journey
+  h += `<section class='block band follow'><div class='wrap follow-grid'><div><span class='eyebrow'>Follow the Journey</span><h2 class='sec-title'>Follow the Journey</h2>` +
+    `<p class='follow-handle'><b>Instagram:</b> <a href='${IG}' target='_blank' rel='noopener'>${HANDLE}</a></p><p class='ftag'>Mind · Body · Money</p>` +
+    `<a class='btn solid' href='${IG}' target='_blank' rel='noopener'>Follow →</a></div>${signupForm('home', 'Or get new articles by email')}</div></section>`;
+
+  page('/', 'index.html', {
+    title: NAME + ' · Grow Your Mind, Body & Money',
+    description: 'Practical articles and guides on mind, body and money: discipline, fitness, nutrition, PSX, gold and crypto. Built for Pakistan and South Asia.',
+    head: legacyRedirect,
+    jsonld: { '@context': 'https://schema.org', '@type': 'WebSite', name: NAME, url: SITE + '/', description: 'Practical articles and guides on mind, body and money for Pakistan and South Asia.', inLanguage: 'en' },
+    body: h,
+  });
+}
+
+{ // Success Stories series
+  const list = STORIES.map(s => POSTS.find(p => p.slug === s)).filter(Boolean);
+  let h = `<section class='wrap pagehead'><span class='eyebrow'>A series</span><h1 style='margin-top:14px'>Success Stories</h1><p>How founders turned small ideas into big companies: the problem they saw, the setbacks they faced, and the lessons ordinary readers can use. Based on documented facts, with the failures left in.</p></section>${line('margin-top:28px')}`;
+  h += `<section class='block'><div class='wrap'><ol class='series'>${list.map(p => `<li class='${COLORS[p.pillar]}'><a href='${postUrl(p)}'><span class='part'>Part ${storyPart(p.slug)}</span><div><h2>${esc(p.title)}</h2><p>${esc(p.lede)}</p><span class='meta'>${p.read} min read</span></div></a></li>`).join('')}</ol>` +
+    `<p class='meta' style='margin-top:24px'>A note on survivorship bias: we hear about the companies that made it, not the many that tried just as hard and failed. These stories are for learning habits and thinking, not proof that any approach guarantees success.</p>${signupForm('stories', 'Get the next story by email')}</div></section>`;
+  page('/stories', 'stories.html', { title: 'Success Stories: founders who turned small ideas into big companies', description: 'A series on founders such as Careem, Airbnb, Jack Dorsey, Elon Musk, CZ, Jensen Huang and Jeff Bezos: the problem, the setbacks and the practical lessons.', body: h });
+}
+
+{ // Breaking Patterns
+  const list = PATTERNS.map(s => POSTS.find(p => p.slug === s)).filter(Boolean);
+  const bph = photo('brain');
+  let h = `<div class='pagehero${bph.cls}'${bph.style}><section class='wrap pagehead'><span class='eyebrow'>Breaking Patterns</span><h1 style='margin-top:14px'>Breaking Patterns</h1><p>Behaviour, mistakes, decision-making, FOMO, discipline and lessons from real life. Spot the pattern first, then change it.</p></section></div>${line('margin-top:28px')}`;
+  h += `<section class='block'><div class='wrap'><div class='grid'>${list.map(card).join('')}</div></div></section>`;
+  page('/patterns', 'patterns.html', { title: 'Breaking Patterns: behaviour, FOMO and better decisions', description: 'Articles on behaviour, mistakes, decision-making, FOMO and discipline, with practical ways to break unhelpful patterns.', body: h });
 }
 
 for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations guide, then articles
@@ -375,14 +467,15 @@ for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations gui
 }
 
 { // guides
-  let h = `<section class='wrap pagehead'><span class='eyebrow'>Free resources</span><h1 style='margin-top:14px'>Free guides</h1><p>Practical PDFs to help you trade and invest with rules instead of moods.</p></section>${line('margin-top:28px')}`;
-  h += `<section class='block'><div class='wrap'><div class='guides'>` +
+  let h = `<section class='wrap pagehead'><span class='eyebrow'>Practical guides</span><h1 style='margin-top:14px'>Guides</h1><p>Longer, evergreen guides for mind, body and money, plus free PDFs for traders and investors.</p></section>${line('margin-top:28px')}`;
+  h += `<section class='block'><div class='wrap'><div class='gcols gcols-full'>` + ['Mind', 'Body', 'Money'].map(n => { const k = PILLARS[n].key; return `<div class='gcol ${COLORS[n]}'><h2>${n} Guides</h2><ul>${FOUNDATIONS[n].sections.map(s => `<li><a href='/${k}#${s.id}'><b>${s.title}</b><span>${s.line}</span></a></li>`).join('')}</ul></div>`; }).join('') + `</div></div></section>`;
+  h += `<section class='block band'><div class='wrap'><div class='sechead'><h2>Free PDF guides</h2></div><div class='guides'>` +
     `<div class='guide money'><div class='doc'></div><span class='status free'>Free</span><h3>Trading Guidelines</h3><p>Golden rules for PSX and crypto trading, a pre-trade checklist, a trading plan template and a journal format.</p></div>` +
     `<div class='guide money'><div class='doc'></div><span class='status free'>Free</span><h3>Risk Management Guide</h3><p>The 1% rule, position sizing with a PSX example, stop-losses, risk/reward and why big losses are hard to recover.</p></div>` +
     `<div class='guide mind'><div class='doc'></div><span class='status'>Coming soon</span><h3>Trading Journal &amp; Risk Planner</h3><p>A printable journal and planner to log every trade, review your week and keep your risk rules in one place.</p></div>` +
     `</div><div class='how'><h3 style='font-size:24px'>How to get a free guide</h3><ol><li>Open any trading post on <a href='${IG}' target='_blank' rel='noopener'>${HANDLE}</a>.</li><li>Comment <b>GUIDE</b>.</li><li>The PDF is sent to you in your messages.</li></ol></div>${signupForm('guides', 'Or get the guides and new articles by email')}` +
     `<p class='meta' style='margin-top:20px'>Educational content, not financial advice.</p></div></section>`;
-  page('/guides', 'guides.html', { title: 'Free trading guides', description: 'Free Trading Guidelines and Risk Management Guide PDFs for PSX and crypto traders in Pakistan.', og: 'guides', body: h });
+  page('/guides', 'guides.html', { title: 'Practical guides: mind, body and money', description: 'Evergreen guides on discipline, exercise, food, vitamins, electrolytes, PSX, stocks, gold and crypto, plus free trading and risk management PDFs.', og: 'guides', body: h });
 }
 
 { // about: what the site is and why
@@ -403,6 +496,7 @@ for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations gui
     `<div class='pillar body-p' style='min-height:0'><h3>Simple</h3><p>Short sentences, clear steps and one action you can take today.</p></div>` +
     `<div class='pillar money' style='min-height:0'><h3>Honest</h3><p>No miracle cures, no tips and no get-rich promises. Educational content, never medical or financial advice.</p></div>` +
     `</div></div></section>`;
+  h += `<section class='block' style='padding-top:0'><div class='wrap'><div class='ctas'><a class='btn solid' href='/framework'>See the full framework →</a></div></div></section>`;
   h += `<section class='block' style='padding-top:0'><div class='wrap'><div class='sechead'><h2>Follow and connect</h2></div>${socials()}</div></section>`;
   page('/about', 'about.html', {
     title: 'About The Growth Framework', description: 'What The Growth Framework is about: one simple system for a better life across mind (discipline, ambition, wellness), body (exercise, nutrition, vitamins, electrolytes) and money (PSX, stocks, gold, crypto).', og: 'about',
@@ -412,7 +506,8 @@ for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations gui
 
 POSTS.forEach((p, i) => { // articles
   const newer = POSTS[i - 1], older = POSTS[i + 1], P = PILLARS[p.pillar];
-  let h = `<div class='wrap ${COLORS[p.pillar]}'><article class='article'><nav class='crumbs' aria-label='Breadcrumb'><a href='/'>Home</a> / <a href='/${P.key}'>${p.pillar}</a></nav><div style='margin-top:22px'>${chip(p.pillar)}</div><h1>${esc(p.title)}</h1>${ARTICLE_PHOTO[p.slug] && existsSync(`public/img/${ARTICLE_PHOTO[p.slug]}.jpg`) ? `<img class='art-photo' src='/img/${ARTICLE_PHOTO[p.slug]}.jpg' alt='' width='1200' height='675' decoding='async'>` : ''}<p class='lede'>${esc(p.lede)}</p><div class='meta'><time datetime='${p.date}'>${fmt(p.date)}</time> · ${p.read} min read · By <a href='/about'>Waseem Raja</a></div><div class='content'>${p.body}</div>`;
+  let h = `<div class='wrap ${COLORS[p.pillar]}'><article class='article'><nav class='crumbs' aria-label='Breadcrumb'><a href='/'>Home</a> / <a href='/${P.key}'>${p.pillar}</a></nav><div style='margin-top:22px'>${chip(p.pillar)}${storyPart(p.slug) ? ` <a class='serieslabel' href='/stories'>Success Stories · Part ${storyPart(p.slug)}</a>` : ''}</div><h1>${esc(p.title)}</h1>${ARTICLE_PHOTO[p.slug] && existsSync(`public/img/${ARTICLE_PHOTO[p.slug]}.jpg`) ? `<img class='art-photo' src='/img/${ARTICLE_PHOTO[p.slug]}.jpg' alt='' width='1200' height='675' decoding='async'>` : ''}<p class='lede'>${esc(p.lede)}</p><div class='meta'><time datetime='${p.date}'>${fmt(p.date)}</time> · ${p.read} min read · By <a href='/about'>Waseem Raja</a></div><div class='content'>${p.body}${p.sources && p.sources.length ? `<section class='sources'><h2>Sources</h2><ol>${p.sources.map(s => `<li>${esc(s)}</li>`).join('')}</ol></section>` : ''}</div>`;
+  if (storyPart(p.slug)) h += `<nav class='seriesnav' aria-label='Success Stories series'><h2>More in the Success Stories series</h2><ol>${STORIES.map(s => POSTS.find(x => x.slug === s)).filter(Boolean).map(x => `<li${x.slug === p.slug ? " aria-current='page'" : ''}><a href='${postUrl(x)}'><span class='part'>Part ${storyPart(x.slug)}</span> ${esc(x.title)}</a></li>`).join('')}</ol></nav>`;
   h += shareBar(url(postUrl(p)), p.title + ' · ' + NAME, 'Share this article');
   h += signupForm('article');
   h += `<p class='disclaimer'>Educational content only. This is not medical or financial advice. Check facts with qualified professionals before you act.</p><nav class='nextprev' aria-label='More articles'>`;
