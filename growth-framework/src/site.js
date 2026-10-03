@@ -49,7 +49,7 @@ document.querySelectorAll('form.signup').forEach(function(f){
 // Gentle fade-in for sections as they scroll into view.
 (function(){
   if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  var els=document.querySelectorAll('.acard,.pdeep .split>div,.flow li,.chain li,.fcard,.pcard,.nots p,.trio li,.fdn-sec');
+  var els=document.querySelectorAll('.chartfig,.acard,.pdeep .split>div,.flow li,.chain li,.fcard,.pcard,.nots p,.trio li,.fdn-sec');
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
   els.forEach(function(el){el.classList.add('reveal');io.observe(el)});
 })();

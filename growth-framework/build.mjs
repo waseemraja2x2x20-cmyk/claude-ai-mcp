@@ -162,6 +162,12 @@ function psxBand(withLink, cls = 'block band money') {
   return `<section class='${cls}'><div class='wrap split'><div><span class='chip'><i></i>PSX Alpha</span><h2 style='margin-top:16px'>Research a PSX stock in <span class='acc'>five numbers</span>.</h2><p>PSX Alpha is a simple, repeatable way to look at Pakistan Stock Exchange companies before you read the headlines. Facts first, then opinion.</p>${withLink ? "<div class='ctas'><a class='btn solid' href='/psx'>Explore PSX Alpha</a></div>" : ''}</div>` +
     "<ol class='numbers'><li><div>Earnings per share (EPS) and its trend<small>Is profit per share growing over several years?</small></div></li><li><div>Price-to-earnings (P/E)<small>How much you pay for each rupee of profit.</small></div></li><li><div>Dividend yield and payout<small>Cash returned, and whether it is sustainable.</small></div></li><li><div>Debt against equity<small>How much of the business is borrowed.</small></div></li><li><div>Cash from operations<small>Do reported profits turn into real cash?</small></div></li></ol></div></section>";
 }
+// Background photos (public/img/<key>.jpg). Missing files are skipped so the page never shows a broken image.
+const photo = key => existsSync(`public/img/${key}.jpg`) ? { cls: ' has-photo', style: ` style="--photo:url('/img/${key}.jpg')"` } : { cls: '', style: '' };
+const GALLERY = [['yoga', 'Yoga at sunrise'], ['hiking', 'Hiking in the north'], ['longevity', 'Staying active for life']];
+const gallery = () => { const g = GALLERY.filter(([k]) => existsSync(`public/img/${k}.jpg`)); return g.length ? `<div class='gallery'>${g.map(([k, c]) => `<figure><img src='/img/${k}.jpg' alt='${c}' loading='lazy' decoding='async' width='800' height='450'><figcaption>${c}</figcaption></figure>`).join('')}</div>` : ''; };
+// Header photo for articles where one fits.
+const ARTICLE_PHOTO = { 'longevity-basics': 'longevity', 'walk-every-day': 'hiking', 'strength-twice-a-week': 'body', 'steady-sleep-and-wake-time': 'yoga', 'longevity-and-money': 'longevity', 'one-focused-block': 'mind', 'sunday-review': 'mind', 'decision-journal': 'mind', 'why-one-framework': 'mind', 'what-is-psx-alpha': 'money', 'five-numbers-before-a-psx-stock': 'money', 'index-is-not-your-portfolio': 'money', 'one-page-trade-plan': 'money', 'crypto-and-psx-risk': 'money' };
 const line = (style = '') => `<div class='wrap'><div class='line'${style ? ` style='${style}'` : ''}></div></div>`;
 
 // ---------- pages ----------
@@ -215,10 +221,32 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
       ['Investing fundamentals', 'Asset classes', 'Risk management', 'Market behaviour', 'Long-term wealth building', 'Trading psychology', 'Financial mistakes', 'Investment frameworks', 'Pakistan &amp; global markets'],
       'Learn the rules before taking the risk.'],
   ];
+  // Floating original quotes for the Mind section, and an illustrative chart for Money.
+  const quotes = ['Decide once. Repeat daily.', 'Rules beat moods.', 'Small steps, every day.', 'Progress, not perfection.', 'Calm mind. Clear choices.', 'Do it on the bad days too.'];
+  const qrow = quotes.map(q => `<span class='fq'>“${q}”</span>`).join('');
+  const floaters = `<div class='ticker' aria-label='Mind principles'><div class='ticker-track'>${qrow}<span class='dup' aria-hidden='true'>${qrow}</span></div></div>`;
+  const chart = `<figure class='chartfig'><svg viewBox='0 0 520 260' role='img' aria-labelledby='chart-t'><title id='chart-t'>Illustrative chart of a long-term rising trend with short-term ups and downs</title>` +
+    `<defs><linearGradient id='cg' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='var(--money)' stop-opacity='.45'/><stop offset='1' stop-color='var(--money)' stop-opacity='0'/></linearGradient></defs>` +
+    `<g class='grid'>${[50, 100, 150, 200].map(y => `<line x1='0' x2='520' y1='${y}' y2='${y}'/>`).join('')}</g>` +
+    (() => { // candles: deterministic, gently rising with pullbacks
+      const pts = [190, 182, 188, 170, 176, 160, 166, 150, 158, 140, 132, 145, 128, 118, 124, 108, 100, 112, 96, 84, 90, 72, 64, 70, 56];
+      let out = '', path = '', area = '';
+      pts.forEach((y, i) => {
+        const x = 12 + i * 20.5, prev = i ? pts[i - 1] : y + 6, up = y < prev;
+        const top = Math.min(y, prev), bot = Math.max(y, prev);
+        out += `<line class='wick' x1='${x}' x2='${x}' y1='${top - 8}' y2='${bot + 8}'/><rect class='${up ? 'up' : 'down'}' x='${x - 5}' y='${top}' width='10' height='${Math.max(bot - top, 3)}' rx='2'/>`;
+        path += `${i ? 'L' : 'M'}${x},${y - 4}`;
+      });
+      area = `${path}L${12 + 24 * 20.5},260L12,260Z`;
+      return `<path class='area' d='${area}' fill='url(#cg)'/><g class='candles'>${out}</g><path class='trend' d='${path}'/>`;
+    })() +
+    `</svg><figcaption>Illustration only, not real market data. Long-term trends include many short-term falls.</figcaption></figure>`;
+
   deep.forEach(([n, k, title, paras, items, close], i) => {
-    h += `<section class='block pdeep ${COLORS[n]}${i % 2 ? ' band' : ''}' id='pillar-${k}'><div class='wrap split'>` +
+    const ph = photo(k);
+    h += `<section class='block pdeep ${COLORS[n]}${i % 2 ? ' band' : ''}${ph.cls}' id='pillar-${k}'${ph.style}><div class='wrap split'>` +
       `<div><span class='chip'><i></i>${n}</span><h2 style='margin-top:16px'>${title}</h2>${paras.map(p => `<p>${p}</p>`).join('')}</div>` +
-      `<div>${list(items)}<p class='close-line'>${close}</p><div class='ctas'><a class='btn solid' href='/${k}'>Explore ${n}</a></div></div></div></section>`;
+      `<div>${k === 'money' ? chart : ''}${list(items)}<p class='close-line'>${close}</p><div class='ctas'><a class='btn solid' href='/${k}'>Explore ${n}</a></div></div></div>${k === 'body' ? `<div class='wrap'>${gallery()}</div>` : ''}${k === 'mind' ? floaters : ''}</section>`;
   });
 
   // 3b. Stocks, gold and crypto (summaries; full detail lives on /money)
@@ -290,8 +318,10 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
 
 for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations guide, then articles
   const P = PILLARS[name], F = FOUNDATIONS[name], list = POSTS.filter(p => p.pillar === name);
-  let h = `<div class='${COLORS[name]}'><section class='wrap pagehead'>${chip(name)}<h1 style='margin-top:18px'>${name}</h1><p>${F.intro}</p>` +
-    `<nav class='toc' aria-label='On this page'>${F.sections.map(s => `<a href='#${s.id}'>${s.title}</a>`).join('')}<a href='#articles'>Articles</a></nav></section>${line('margin-top:28px')}`;
+  const ph = photo(P.key);
+  let h = `<div class='${COLORS[name]}'><div class='pagehero${ph.cls}'${ph.style}><section class='wrap pagehead'>${chip(name)}<h1 style='margin-top:18px'>${name}</h1><p>${F.intro}</p>` +
+    `<nav class='toc' aria-label='On this page'>${F.sections.map(s => `<a href='#${s.id}'>${s.title}</a>`).join('')}<a href='#articles'>Articles</a></nav></section></div>${line('margin-top:28px')}`;
+  if (name === 'Body' && gallery()) h += `<section class='block' style='padding-bottom:0'><div class='wrap'>${gallery()}</div></section>`;
   h += `<section class='block'><div class='wrap'><div class='fdn'>` +
     F.sections.map((s, i) => `<section class='fdn-sec' id='${s.id}'><div class='fdn-side'><span class='num'>${String(i + 1).padStart(2, '0')}</span><h2>${s.title}</h2><p>${s.line}</p></div><div class='prose'>${s.html}</div></section>`).join('') +
     `</div><p class='disclaimer'>Educational content only. Not medical or financial advice. Talk to a doctor or a licensed adviser before acting.</p></div></section>`;
@@ -354,7 +384,7 @@ for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations gui
 
 POSTS.forEach((p, i) => { // articles
   const newer = POSTS[i - 1], older = POSTS[i + 1], P = PILLARS[p.pillar];
-  let h = `<div class='wrap ${COLORS[p.pillar]}'><article class='article'><nav class='crumbs' aria-label='Breadcrumb'><a href='/'>Home</a> / <a href='/${P.key}'>${p.pillar}</a></nav><div style='margin-top:22px'>${chip(p.pillar)}</div><h1>${esc(p.title)}</h1><p class='lede'>${esc(p.lede)}</p><div class='meta'><time datetime='${p.date}'>${fmt(p.date)}</time> · ${p.read} min read · By <a href='/about'>Waseem Raja</a></div><div class='content'>${p.body}</div>`;
+  let h = `<div class='wrap ${COLORS[p.pillar]}'><article class='article'><nav class='crumbs' aria-label='Breadcrumb'><a href='/'>Home</a> / <a href='/${P.key}'>${p.pillar}</a></nav><div style='margin-top:22px'>${chip(p.pillar)}</div><h1>${esc(p.title)}</h1>${ARTICLE_PHOTO[p.slug] && existsSync(`public/img/${ARTICLE_PHOTO[p.slug]}.jpg`) ? `<img class='art-photo' src='/img/${ARTICLE_PHOTO[p.slug]}.jpg' alt='' width='1200' height='675' decoding='async'>` : ''}<p class='lede'>${esc(p.lede)}</p><div class='meta'><time datetime='${p.date}'>${fmt(p.date)}</time> · ${p.read} min read · By <a href='/about'>Waseem Raja</a></div><div class='content'>${p.body}</div>`;
   h += shareBar(url(postUrl(p)), p.title + ' · ' + NAME, 'Share this article');
   h += signupForm('article');
   h += `<p class='disclaimer'>Educational content only. This is not medical or financial advice. Check facts with qualified professionals before you act.</p><nav class='nextprev' aria-label='More articles'>`;
