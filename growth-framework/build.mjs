@@ -21,6 +21,8 @@ const PATTERNS = ['panic-selling-after-a-market-fall', 'procrastination-is-a-moo
 // Success Stories series, in publishing order (Part 1 first). Add new stories to the end.
 const STORIES = ['careem-from-karachi-to-uber', 'airbnb-air-mattresses-to-global', 'jack-dorsey-twitter-square-block', 'elon-musk-risk-and-failure', 'cz-binance-fast-growth-and-rules', 'jensen-huang-nvidia-long-bets', 'jeff-bezos-amazon-long-term'];
 const storyPart = slug => STORIES.indexOf(slug) + 1;
+// AI & Skills: real use cases and evidence about AI at work, not hype.
+const AI_SKILLS = ['why-ai-skills-matter-for-the-future', 'what-research-says-about-ai-at-work', 'how-this-website-was-built-with-ai', 'earning-with-ai-skills-pakistan', 'spotting-fake-ai-claims'];
 // Home page picks. FEATURED is the lead story. MOST_READ is hand-picked until real view counts are available.
 const FEATURED = 'why-one-framework';
 const MOST_READ = ['five-numbers-before-a-psx-stock', 'inflation-explained', 'protein-pakistani-plate', 'how-habits-form', 'gold-in-pakistan-basics'];
@@ -46,7 +48,7 @@ const SOCIAL = [
   { n: 'Facebook', h: HANDLE, u: 'https://www.facebook.com/the_growth_frame_work', k: 'f', bg: '#1877f2' },
   { n: 'LinkedIn', h: 'Muhammad Waseem Raja', u: 'https://www.linkedin.com/in/muhammad-waseem-raja-848a25323/', k: 'in', bg: '#0a66c2' },
 ];
-const NAV = [['/mind', 'Mind'], ['/body', 'Body'], ['/money', 'Money'], ['/patterns', 'Patterns'], ['/stories', 'Stories'], ['/psx', 'PSX'], ['/guides', 'Guides'], ['/about', 'About']];
+const NAV = [['/mind', 'Mind'], ['/body', 'Body'], ['/money', 'Money'], ['/patterns', 'Patterns'], ['/stories', 'Stories'], ['/ai', 'AI & Skills'], ['/psx', 'PSX'], ['/guides', 'Guides'], ['/about', 'About']];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -172,7 +174,7 @@ const GALLERY = [['yoga', 'Yoga at sunrise'], ['hiking', 'Hiking in the north'],
 const MIND_GALLERY = [['meditate', 'Stillness at sunrise'], ['journal', 'Plan the week on paper'], ['brain', 'Train the mind like a muscle']];
 const gallery = (list = GALLERY) => { const g = list.filter(([k]) => existsSync(`public/img/${k}.jpg`)); return g.length ? `<div class='gallery'>${g.map(([k, c]) => `<figure><img src='/img/${k}.jpg' alt='${c}' loading='lazy' decoding='async' width='800' height='450'><figcaption>${c}</figcaption></figure>`).join('')}</div>` : ''; };
 // Header photo for articles where one fits.
-const ARTICLE_PHOTO = { 'careem-from-karachi-to-uber': 'money', 'airbnb-air-mattresses-to-global': 'journal', 'jack-dorsey-twitter-square-block': 'brain', 'elon-musk-risk-and-failure': 'mind', 'cz-binance-fast-growth-and-rules': 'money', 'jensen-huang-nvidia-long-bets': 'brain', 'jeff-bezos-amazon-long-term': 'journal', 'fat-loss-myths': 'body', 'panic-selling-after-a-market-fall': 'money', 'pay-yourself-first-system': 'journal', 'fibre-the-missing-nutrient': 'longevity', 'procrastination-is-a-mood-problem': 'journal', 'sleep-debt-explained': 'yoga', 'cardio-vs-strength-training': 'body', 'dividend-yield-explained': 'money', 'fomo-buying-after-the-run': 'brain', 'sunk-cost-trap': 'journal', 'inflation-explained': 'money', 'emergency-fund-first': 'money', 'gold-in-pakistan-basics': 'money', 'protein-pakistani-plate': 'body', 'hydration-in-the-heat': 'hiking', 'how-habits-form': 'journal', 'discipline-vs-motivation': 'meditate', 'longevity-basics': 'longevity', 'walk-every-day': 'hiking', 'strength-twice-a-week': 'body', 'steady-sleep-and-wake-time': 'yoga', 'longevity-and-money': 'longevity', 'one-focused-block': 'mind', 'sunday-review': 'mind', 'decision-journal': 'mind', 'why-one-framework': 'mind', 'what-is-psx-alpha': 'money', 'five-numbers-before-a-psx-stock': 'money', 'index-is-not-your-portfolio': 'money', 'one-page-trade-plan': 'money', 'crypto-and-psx-risk': 'money' };
+const ARTICLE_PHOTO = { 'why-ai-skills-matter-for-the-future': 'brain', 'what-research-says-about-ai-at-work': 'journal', 'how-this-website-was-built-with-ai': 'mind', 'earning-with-ai-skills-pakistan': 'money', 'spotting-fake-ai-claims': 'brain', 'careem-from-karachi-to-uber': 'money', 'airbnb-air-mattresses-to-global': 'journal', 'jack-dorsey-twitter-square-block': 'brain', 'elon-musk-risk-and-failure': 'mind', 'cz-binance-fast-growth-and-rules': 'money', 'jensen-huang-nvidia-long-bets': 'brain', 'jeff-bezos-amazon-long-term': 'journal', 'fat-loss-myths': 'body', 'panic-selling-after-a-market-fall': 'money', 'pay-yourself-first-system': 'journal', 'fibre-the-missing-nutrient': 'longevity', 'procrastination-is-a-mood-problem': 'journal', 'sleep-debt-explained': 'yoga', 'cardio-vs-strength-training': 'body', 'dividend-yield-explained': 'money', 'fomo-buying-after-the-run': 'brain', 'sunk-cost-trap': 'journal', 'inflation-explained': 'money', 'emergency-fund-first': 'money', 'gold-in-pakistan-basics': 'money', 'protein-pakistani-plate': 'body', 'hydration-in-the-heat': 'hiking', 'how-habits-form': 'journal', 'discipline-vs-motivation': 'meditate', 'longevity-basics': 'longevity', 'walk-every-day': 'hiking', 'strength-twice-a-week': 'body', 'steady-sleep-and-wake-time': 'yoga', 'longevity-and-money': 'longevity', 'one-focused-block': 'mind', 'sunday-review': 'mind', 'decision-journal': 'mind', 'why-one-framework': 'mind', 'what-is-psx-alpha': 'money', 'five-numbers-before-a-psx-stock': 'money', 'index-is-not-your-portfolio': 'money', 'one-page-trade-plan': 'money', 'crypto-and-psx-risk': 'money' };
 // Compounding chart: real arithmetic (monthly saving, assumed yearly return), not market data.
 function compoundChart() {
   const P = 10000, rate = 0.10 / 12, years = 20, W = 640, H = 300, pad = { l: 56, r: 16, t: 16, b: 34 };
@@ -203,7 +205,7 @@ const pages = [];
 const page = (path, file, opts) => pages.push({ path, file, html: layout({ path, ...opts }) });
 
 // Old links used #fragments (e.g. /#five-numbers-before-a-psx-stock). Send them to the new pages.
-const LEGACY = { home: '/', framework: '/framework', patterns: '/patterns', stories: '/stories', mind: '/mind', body: '/body', money: '/money', psx: '/psx', guides: '/guides', about: '/about', all: '/articles' };
+const LEGACY = { home: '/', ai: '/ai', framework: '/framework', patterns: '/patterns', stories: '/stories', mind: '/mind', body: '/body', money: '/money', psx: '/psx', guides: '/guides', about: '/about', all: '/articles' };
 const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||h==='latest')return;var R=${JSON.stringify(LEGACY)},S=${JSON.stringify(POSTS.map(p => p.slug))};var t=R[h]||(S.indexOf(h)>=0?'/articles/'+h:null);if(t&&t!=='/')location.replace(t+location.search)})();</script>\n`;
 
 { // /framework: the full framework story (landing copy supplied by the site owner)
@@ -388,6 +390,13 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
     `<div class='bp-cards'>${st.map(p => `<a class='bp-card story-card' href='${postUrl(p)}'><span class='part'>Part ${storyPart(p.slug)}</span><h3>${esc(p.title)}</h3><span class='meta'>${p.read} min read</span></a>`).join('')}</div>` +
     `<a class='btn solid' href='/stories' style='margin-top:26px'>Explore Success Stories →</a></div></section>`;
 
+  // AI & Skills
+  const ai = AI_SKILLS.map(bySlug).filter(Boolean).slice(0, 3);
+  h += `<section class='block ai-sec'><div class='wrap'><span class='eyebrow'>AI &amp; Skills</span><h2 class='sec-title'>AI &amp; Skills</h2>` +
+    `<p class='sec-lead'>Real use cases and research on AI at work, not hype. What it does well, where it fails, and how to build skills that last.</p>` +
+    `<div class='bp-cards'>${ai.map(p => `<a class='bp-card' href='${postUrl(p)}'><h3>${esc(p.title)}</h3><span class='meta'>${p.read} min read</span></a>`).join('')}</div>` +
+    `<a class='btn solid' href='/ai' style='margin-top:26px'>Explore AI &amp; Skills →</a></div></section>`;
+
   // Practical guides
   h += `<section class='block'><div class='wrap'><span class='eyebrow'>Practical Guides</span><h2 class='sec-title'>Practical Guides</h2><p class='sec-lead'>Longer, evergreen guides you can come back to.</p><div class='gcols'>` +
     ['Mind', 'Body', 'Money'].map(n => { const k = PILLARS[n].key; return `<div class='gcol ${COLORS[n]}'><h3>${n} Guides</h3><ul>${FOUNDATIONS[n].sections.slice(0, 3).map(s => `<li><a href='/${k}#${s.id}'>${s.title}</a></li>`).join('')}</ul></div>`; }).join('') +
@@ -418,6 +427,14 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
     jsonld: { '@context': 'https://schema.org', '@type': 'WebSite', name: NAME, url: SITE + '/', description: 'Practical articles and guides on mind, body and money for Pakistan and South Asia.', inLanguage: 'en' },
     body: h,
   });
+}
+
+{ // AI & Skills
+  const list = AI_SKILLS.map(s => POSTS.find(p => p.slug === s)).filter(Boolean);
+  let h = `<section class='wrap pagehead'><span class='eyebrow'>Real use, not hype</span><h1 style='margin-top:14px'>AI &amp; Skills</h1><p>How AI is actually used at work, what research shows about where it helps and where it fails, and how to build skills that stay valuable. No income promises, no viral claims.</p></section>${line('margin-top:28px')}`;
+  h += `<section class='block'><div class='wrap'><div class='grid'>${list.map(card).join('')}</div>` +
+    `<p class='meta' style='margin-top:24px'>AI tools change quickly. Each article shows when it was last checked. Nothing here is a guarantee of income or results.</p>${signupForm('ai', 'Get new AI &amp; Skills articles by email')}</div></section>`;
+  page('/ai', 'ai.html', { title: 'AI & Skills: real use cases and evidence, not hype', description: 'What research shows about AI at work, real case studies, earning with AI skills from Pakistan, and how to spot fake AI claims.', body: h });
 }
 
 { // Success Stories series
