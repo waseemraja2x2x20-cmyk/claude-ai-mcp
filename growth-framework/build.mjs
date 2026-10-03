@@ -33,8 +33,8 @@ const PILLARS = {
 };
 const SOCIAL = [
   { n: 'Instagram', h: HANDLE, u: IG, k: 'IG', bg: 'linear-gradient(135deg,#f58529,#dd2a7b,#8134af)' },
-  { n: 'Pinterest', h: '@wraja7325', u: 'https://www.pinterest.com/wraja7325/', k: 'P', bg: '#e60023' },
-  { n: 'Facebook', h: '@wander.sky', u: 'https://www.facebook.com/wander.sky', k: 'f', bg: '#1877f2' },
+  { n: 'Pinterest', h: HANDLE, u: 'https://www.pinterest.com/the_growth_frame_work/', k: 'P', bg: '#e60023' },
+  { n: 'Facebook', h: HANDLE, u: 'https://www.facebook.com/the_growth_frame_work', k: 'f', bg: '#1877f2' },
   { n: 'LinkedIn', h: 'Muhammad Waseem Raja', u: 'https://www.linkedin.com/in/muhammad-waseem-raja-848a25323/', k: 'in', bg: '#0a66c2' },
 ];
 const NAV = [['/mind', 'Mind'], ['/body', 'Body'], ['/money', 'Money'], ['/psx', 'PSX Alpha'], ['/guides', 'Free guides'], ['/about', 'About']];
