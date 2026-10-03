@@ -25,6 +25,7 @@ Old links like `/#five-numbers-before-a-psx-stock` (from Instagram bios and earl
 ## Files
 
 - `src/posts.mjs`: article content
+- `src/foundations.mjs`: the Mind, Body and Money foundations guides (also summarised on the home page)
 - `src/styles.css`, `src/site.js`: design and browser behaviour (menu, theme, filter, Instagram embeds)
 - `build.mjs`: page templates, SEO tags, sitemap and RSS
 - `og.mjs`: share-image renderer, writes to `public/og/`

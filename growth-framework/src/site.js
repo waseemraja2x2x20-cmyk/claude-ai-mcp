@@ -25,3 +25,31 @@
     var s=document.createElement('script'); s.async=true; s.src='https://www.instagram.com/embed.js'; document.body.appendChild(s);
   }
 })();
+
+// Email sign-up: adds the address to the Supabase subscribers table (insert-only key).
+document.querySelectorAll('form.signup').forEach(function(f){
+  var note=f.querySelector('.signup-note'), btn=f.querySelector('button'), input=f.querySelector('input[type=email]');
+  function say(cls,msg){f.classList.remove('ok','err');if(cls)f.classList.add(cls);note.textContent=msg}
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=input.value.trim();
+    if(f.querySelector('.hp').value){say('ok','Thanks, you are on the list.');return}
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){say('err','Please enter a valid email address.');input.focus();return}
+    btn.disabled=true; say('','Signing you up…');
+    fetch(f.dataset.url+'/rest/v1/subscribers',{method:'POST',headers:{'apikey':f.dataset.key,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({email:email,source:f.dataset.source})})
+      .then(function(r){
+        if(r.ok||r.status===409){say('ok','Thanks, you are on the list.');f.reset();return}
+        throw new Error(r.status);
+      })
+      .catch(function(){say('err','Something went wrong. Please try again, or message us on Instagram.')})
+      .then(function(){btn.disabled=false});
+  });
+});
+
+// Gentle fade-in for sections as they scroll into view.
+(function(){
+  if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var els=document.querySelectorAll('.chartfig,.acard,.pdeep .split>div,.flow li,.chain li,.fcard,.pcard,.nots p,.trio li,.fdn-sec,.numlist li,.bp-card,.gcol,.why,.featured');
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(el){el.classList.add('reveal');io.observe(el)});
+})();
