@@ -11,7 +11,7 @@ const HANDLE = '@breaking_patrens_growth';
 const OUT = 'dist';
 // Email sign-up (Supabase). Both values are public by design: the key can only ADD rows to the
 // subscribers table (see supabase/subscribers.sql). Leave empty to hide the form.
-const SIGNUP = { url: '', key: '' };
+const SIGNUP = { url: 'https://aibiwpuuslqjzkhzddph.supabase.co', key: 'sb_publishable_e68hLJbVfvZlwlmfbG-6LA_NTSffny_' };
 
 const COLORS = { Mind: 'mind', Body: 'body-p', Money: 'money' };
 const PSX = ['what-is-psx-alpha', 'five-numbers-before-a-psx-stock', 'index-is-not-your-portfolio', 'crypto-and-psx-risk', 'one-page-trade-plan'];

@@ -5,7 +5,7 @@ create table if not exists public.subscribers (
   email text not null,
   source text,
   created_at timestamptz not null default now(),
-  constraint subscribers_email_format check (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$' and length(email) <= 254),
+  constraint subscribers_email_format check (email ~* '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$' and length(email) <= 254),
   constraint subscribers_source_length check (source is null or length(source) <= 40)
 );
 
@@ -21,4 +21,5 @@ create policy "Website can add sign-ups" on public.subscribers
 
 -- Belt and braces: the public role gets insert only, on the columns the form sends.
 revoke all on public.subscribers from anon;
+revoke all on public.subscribers from authenticated;
 grant insert (email, source) on public.subscribers to anon;
