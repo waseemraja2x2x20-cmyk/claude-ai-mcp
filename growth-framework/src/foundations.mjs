@@ -121,7 +121,8 @@ ${callout('Before you try one.', 'Talk to a doctor or pharmacist, especially if 
         html: `<ol><li><b>Emergency fund.</b> Three to six months of essential expenses in cash or a savings account, so one shock does not force you to sell investments at a bad time.</li>
 <li><b>Expensive debt.</b> Pay off high-interest debt such as credit cards before you invest.</li>
 <li><b>Time horizon.</b> Money you need within two or three years should not be in volatile assets.</li>
-<li><b>Position size.</b> Decide how much you can afford to lose on any one investment before you buy it.</li></ol>`,
+<li><b>Position size.</b> Decide how much you can afford to lose on any one investment before you buy it.</li></ol>
+<!--COMPOUND-->`,
       },
       {
         id: 'psx', title: 'PSX investing', line: 'Owning part of Pakistani companies through the Pakistan Stock Exchange, regulated by the SECP.',

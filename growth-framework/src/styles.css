@@ -416,3 +416,17 @@ footer ul a{text-decoration:none;color:var(--muted)} footer ul a:hover{color:var
 .gallery figcaption{position:absolute;left:0;right:0;bottom:0;padding:28px 14px 12px;font:600 15px var(--display);color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.7))}
 @media (max-width:760px){.gallery{grid-template-columns:1fr}}
 .art-photo{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:16px;border:1px solid var(--line);margin:8px 0 20px}
+/* compounding chart + price-swing lines */
+.compound-row{margin-top:clamp(32px,5vw,56px);align-items:center}
+.ch-title{font-size:clamp(24px,2.6vw,32px);font-weight:800;margin-bottom:10px}
+.compound-row p{color:var(--muted)}
+.ccomp text{font:500 12px var(--mono);fill:var(--faint)}
+.ccomp .lbl{font:700 14px var(--display);fill:var(--fg)}
+.ccomp .a-total{fill:color-mix(in srgb,var(--money) 55%,transparent);stroke:var(--money);stroke-width:2}
+.ccomp .a-paid{fill:color-mix(in srgb,var(--mind) 55%,transparent);stroke:var(--mind);stroke-width:2}
+.ccomp .dot{fill:var(--fg);stroke:var(--bg);stroke-width:2}
+.ccomp figcaption .key{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 6px 0 0;vertical-align:-1px}
+.ccomp .k-paid{background:var(--mind)} .ccomp .k-total{background:var(--money);margin-left:12px}
+.swing{width:100%;height:44px;display:block}
+.swing path{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.swing-stocks path{stroke:var(--body)} .swing-gold path{stroke:var(--money)} .swing-crypto path{stroke:#ff6b6b}

@@ -168,6 +168,29 @@ const GALLERY = [['yoga', 'Yoga at sunrise'], ['hiking', 'Hiking in the north'],
 const gallery = () => { const g = GALLERY.filter(([k]) => existsSync(`public/img/${k}.jpg`)); return g.length ? `<div class='gallery'>${g.map(([k, c]) => `<figure><img src='/img/${k}.jpg' alt='${c}' loading='lazy' decoding='async' width='800' height='450'><figcaption>${c}</figcaption></figure>`).join('')}</div>` : ''; };
 // Header photo for articles where one fits.
 const ARTICLE_PHOTO = { 'longevity-basics': 'longevity', 'walk-every-day': 'hiking', 'strength-twice-a-week': 'body', 'steady-sleep-and-wake-time': 'yoga', 'longevity-and-money': 'longevity', 'one-focused-block': 'mind', 'sunday-review': 'mind', 'decision-journal': 'mind', 'why-one-framework': 'mind', 'what-is-psx-alpha': 'money', 'five-numbers-before-a-psx-stock': 'money', 'index-is-not-your-portfolio': 'money', 'one-page-trade-plan': 'money', 'crypto-and-psx-risk': 'money' };
+// Compounding chart: real arithmetic (monthly saving, assumed yearly return), not market data.
+function compoundChart() {
+  const P = 10000, rate = 0.10 / 12, years = 20, W = 640, H = 300, pad = { l: 56, r: 16, t: 16, b: 34 };
+  const pts = [];
+  for (let y = 0; y <= years; y++) { const n = y * 12; pts.push({ y, paid: P * n, total: n ? P * (Math.pow(1 + rate, n) - 1) / rate : 0 }); }
+  const max = 8e6, x = y => pad.l + (W - pad.l - pad.r) * y / years, yv = v => H - pad.b - (H - pad.t - pad.b) * v / max;
+  const area = key => `M${x(0)},${yv(0)} ` + pts.map(p => `L${x(p.y).toFixed(1)},${yv(p[key]).toFixed(1)}`).join(' ') + ` L${x(years)},${yv(0)} Z`;
+  const fmt = v => (v / 1e6).toFixed(1) + 'M';
+  const t10 = pts[10].total, t20 = pts[20].total;
+  return `<figure class='chartfig ccomp'><svg viewBox='0 0 ${W} ${H}' role='img' aria-labelledby='cc-t cc-d'><title id='cc-t'>Saving PKR 10,000 a month at an assumed 10% a year</title><desc id='cc-d'>After 10 years about PKR ${fmt(t10)}, of which PKR 1.2M was paid in. After 20 years about PKR ${fmt(t20)}, of which PKR 2.4M was paid in.</desc>` +
+    `<g class='grid'>${[0, 2e6, 4e6, 6e6, 8e6].map(v => `<line x1='${pad.l}' x2='${W - pad.r}' y1='${yv(v)}' y2='${yv(v)}'/><text x='${pad.l - 8}' y='${yv(v) + 4}' text-anchor='end'>${v ? (v / 1e6) + 'M' : '0'}</text>`).join('')}` +
+    `${[0, 5, 10, 15, 20].map(y => `<text x='${x(y)}' y='${H - 10}' text-anchor='middle'>${y}y</text>`).join('')}</g>` +
+    `<path class='a-total' d='${area('total')}'/><path class='a-paid' d='${area('paid')}'/>` +
+    `<circle class='dot' cx='${x(10)}' cy='${yv(t10)}' r='5'/><text class='lbl' x='${x(10) - 6}' y='${yv(t10) - 12}' text-anchor='end'>10 years: PKR ${fmt(t10)}</text>` +
+    `<circle class='dot' cx='${x(20)}' cy='${yv(t20)}' r='5'/><text class='lbl' x='${x(20) - 8}' y='${yv(t20) + 22}' text-anchor='end'>20 years: PKR ${fmt(t20)}</text></svg>` +
+    `<figcaption><span class='key k-paid'></span>Money you paid in <span class='key k-total'></span>Growth from compounding. Assumes PKR 10,000 a month and a steady 10% yearly return. Real returns vary and can be negative.</figcaption></figure>`;
+}
+// Small illustrative "price swing" lines for the asset cards.
+function swing(kind) {
+  const seeds = { stocks: [30, 26, 31, 24, 28, 20, 25, 18, 22, 15, 19, 12, 16, 10], gold: [24, 23, 25, 22, 23, 21, 22, 20, 21, 19, 20, 18, 18, 16], crypto: [34, 12, 28, 6, 30, 18, 38, 4, 24, 10, 32, 2, 20, 8] }[kind];
+  const d = seeds.map((v, i) => `${i ? 'L' : 'M'}${(i * 120 / (seeds.length - 1)).toFixed(1)},${v}`).join(' ');
+  return `<svg class='swing swing-${kind}' viewBox='0 0 120 40' aria-hidden='true' preserveAspectRatio='none'><path d='${d}'/></svg>`;
+}
 const line = (style = '') => `<div class='wrap'><div class='line'${style ? ` style='${style}'` : ''}></div></div>`;
 
 // ---------- pages ----------
@@ -257,10 +280,12 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
   ];
   h += `<section class='block assets money' id='assets'><div class='wrap'><div class='sechead'><div><span class='chip'><i></i>Money</span><h2 style='margin-top:16px'>Stocks, Gold and Crypto.</h2></div><a href='/money#compare'>Compare them side by side →</a></div>` +
     `<p class='assets-lead'>Three common ways people try to grow money, each with very different rewards and risks. Learn how they work before you put money in.</p><div class='acards'>` +
-    assets.map(([t, tag, d, risk, lvl, lvlTxt, href]) => `<a class='acard' href='${href}'><div class='acard-top'><h3>${t}</h3><span class='tag'>${tag}</span></div><p>${d}</p>` +
+    assets.map(([t, tag, d, risk, lvl, lvlTxt, href]) => `<a class='acard' href='${href}'><div class='acard-top'><h3>${t}</h3><span class='tag'>${tag}</span></div>${swing(t.toLowerCase())}<p>${d}</p>` +
       `<div class='risk'><span class='risk-label'>Risk: <b>${lvlTxt}</b></span><span class='meter' role='img' aria-label='Risk ${lvl} out of 5'>${[1, 2, 3, 4, 5].map(i => `<i${i <= lvl ? " class='on'" : ''}></i>`).join('')}</span><span class='risk-main'>Main risk: ${risk}</span></div>` +
       `<span class='more'>Learn about ${t.toLowerCase()} →</span></a>`).join('') +
-    `</div><p class='meta' style='margin-top:18px'>Educational content only. Not financial advice. All investing carries risk, including the loss of capital.</p></div></section>`;
+    `</div><p class='meta' style='margin-top:10px'>Price-swing lines are illustrations, not real prices.</p>` +
+    `<div class='split compound-row'><div><h3 class='ch-title'>Why time matters more than timing</h3><p>Small, regular amounts grow because returns start earning their own returns. In this example, after 20 years most of the money is growth, not what was paid in.</p><a class='btn ghost' href='/articles/longevity-and-money'>Read: If you may live to 90 →</a></div>${compoundChart()}</div>` +
+    `<p class='meta' style='margin-top:18px'>Educational content only. Not financial advice. All investing carries risk, including the loss of capital.</p></div></section>`;
 
   // 4. The framework
   h += `<section class='block' id='framework'><div class='wrap split'><div><span class='eyebrow'>The Framework</span><h2 style='margin-top:12px'>Three Areas. One Life.</h2>` +
@@ -323,7 +348,7 @@ for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations gui
     `<nav class='toc' aria-label='On this page'>${F.sections.map(s => `<a href='#${s.id}'>${s.title}</a>`).join('')}<a href='#articles'>Articles</a></nav></section></div>${line('margin-top:28px')}`;
   if (name === 'Body' && gallery()) h += `<section class='block' style='padding-bottom:0'><div class='wrap'>${gallery()}</div></section>`;
   h += `<section class='block'><div class='wrap'><div class='fdn'>` +
-    F.sections.map((s, i) => `<section class='fdn-sec' id='${s.id}'><div class='fdn-side'><span class='num'>${String(i + 1).padStart(2, '0')}</span><h2>${s.title}</h2><p>${s.line}</p></div><div class='prose'>${s.html}</div></section>`).join('') +
+    F.sections.map((s, i) => `<section class='fdn-sec' id='${s.id}'><div class='fdn-side'><span class='num'>${String(i + 1).padStart(2, '0')}</span><h2>${s.title}</h2><p>${s.line}</p></div><div class='prose'>${s.html.replace('<!--COMPOUND-->', compoundChart())}</div></section>`).join('') +
     `</div><p class='disclaimer'>Educational content only. Not medical or financial advice. Talk to a doctor or a licensed adviser before acting.</p></div></section>`;
   h += `<section class='block band' id='articles'><div class='wrap'><div class='sechead'><h2>${name} articles</h2><a href='/articles'>All articles →</a></div>${list.length ? feature(list[0]) + `<div class='grid'>${list.slice(1).map(card).join('')}</div>` : "<p class='empty'>New articles are on the way.</p>"}</div></section></div>`;
   const topics = F.sections.map(s => s.title.toLowerCase()).join(', ');
