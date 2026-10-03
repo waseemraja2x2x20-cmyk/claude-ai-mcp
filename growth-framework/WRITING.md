@@ -160,3 +160,8 @@ Published: 1 Careem, 2 Airbnb, 3 Jack Dorsey (Twitter, Square/Block), 4 Elon Mus
 6 Jensen Huang (Nvidia), 7 Jeff Bezos (Amazon).
 Ideas for later parts (check current facts before writing): recent fintech companies, including Pakistani
 fintechs, Stripe, Revolut, Nubank, Daraz, Systems Ltd.
+
+## AI & Skills
+
+Real use cases and evidence only, no hype or income promises. Each article shows "Last checked" and lists
+sources. Add slugs to `AI_SKILLS` in `build.mjs`.
