@@ -7,8 +7,8 @@ import { FOUNDATIONS } from './src/foundations.mjs';
 
 const SITE = 'https://thegrowthframework.live';
 const NAME = 'The Growth Framework';
-const IG = 'https://www.instagram.com/breaking_patrens_growth/';
-const HANDLE = '@breaking_patrens_growth';
+const IG = 'https://www.instagram.com/the_growth_frame_work/';
+const HANDLE = '@the_growth_frame_work';
 const OUT = 'dist';
 // Email sign-up (Supabase). Both values are public by design: the key can only ADD rows to the
 // subscribers table (see supabase/subscribers.sql). Leave empty to hide the form.

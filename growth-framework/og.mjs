@@ -50,7 +50,7 @@ h1{font-weight:800;letter-spacing:-.025em;line-height:1.04;margin-top:auto;font-
 </style></head><body>
 <div class="top"><div class="brand"><span class="dots"><i style="background:#a082ff"></i><i style="background:#3ddc84"></i><i style="background:#ffc454"></i></span>The Growth Framework</div><span class="chip">${esc(it.label)}</span></div>
 <h1>${it.raw ? it.title : esc(it.title)}</h1>
-<div class="foot"><span>thegrowthframework.live</span><span>${esc(it.meta || '@breaking_patrens_growth')}</span></div>
+<div class="foot"><span>thegrowthframework.live</span><span>${esc(it.meta || '@the_growth_frame_work')}</span></div>
 </body></html>`;
 
 mkdirSync('public/og', { recursive: true });
