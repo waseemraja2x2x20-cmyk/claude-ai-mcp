@@ -284,9 +284,7 @@ writeFileSync(OUT + '/robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/
 const rfc822 = d => new Date(d + 'T06:00:00+05:00').toUTCString();
 writeFileSync(OUT + '/feed.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>\n<title>${NAME}</title>\n<link>${SITE}/</link>\n<atom:link href="${SITE}/feed.xml" rel="self" type="application/rss+xml"/>\n<description>Better life through mind, body and money.</description>\n<language>en</language>\n` +
   POSTS.map(p => `<item><title>${esc(p.title)}</title><link>${url(postUrl(p))}</link><guid>${url(postUrl(p))}</guid><pubDate>${rfc822(p.date)}</pubDate><category>${p.pillar}</category><description>${esc(p.lede)}</description></item>`).join('\n') + '\n</channel></rss>\n');
-writeFileSync(OUT + '/vercel.json', JSON.stringify({
-  cleanUrls: true, trailingSlash: false,
-  headers: [{ source: '/assets/(.*)', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] }],
-}, null, 2) + '\n');
+// Vercel reads vercel.json from the project's root directory (this folder); copy it into dist/ too for CLI deploys of dist/.
+cpSync('vercel.json', OUT + '/vercel.json');
 
 console.log(`Built ${pages.length} pages into ${OUT}/`);

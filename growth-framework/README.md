@@ -20,7 +20,7 @@ Old links like `/#five-numbers-before-a-psx-stock` (from Instagram bios and earl
 1. Edit `src/posts.mjs`. Add the new article at the **top** of the list: `slug`, `pillar` (Mind, Body or Money), `date`, `read`, `title`, `lede`, `body`.
 2. `node og.mjs` renders the share image (needs Playwright and Chromium).
 3. `node build.mjs` writes the site to `dist/`, including `sitemap.xml`, `feed.xml` (RSS) and `robots.txt`.
-4. Deploy `dist/`, e.g. `cd dist && vercel` for a preview, then `vercel --prod` for the live site.
+4. Push to GitHub. Vercel builds every branch as a preview, and `main` goes live. For a manual deploy: `cd dist && vercel`.
 
 ## Files
 
