@@ -165,7 +165,8 @@ function psxBand(withLink, cls = 'block band money') {
 // Background photos (public/img/<key>.jpg). Missing files are skipped so the page never shows a broken image.
 const photo = key => existsSync(`public/img/${key}.jpg`) ? { cls: ' has-photo', style: ` style="--photo:url('/img/${key}.jpg')"` } : { cls: '', style: '' };
 const GALLERY = [['yoga', 'Yoga at sunrise'], ['hiking', 'Hiking in the north'], ['longevity', 'Staying active for life']];
-const gallery = () => { const g = GALLERY.filter(([k]) => existsSync(`public/img/${k}.jpg`)); return g.length ? `<div class='gallery'>${g.map(([k, c]) => `<figure><img src='/img/${k}.jpg' alt='${c}' loading='lazy' decoding='async' width='800' height='450'><figcaption>${c}</figcaption></figure>`).join('')}</div>` : ''; };
+const MIND_GALLERY = [['meditate', 'Stillness at sunrise'], ['journal', 'Plan the week on paper'], ['brain', 'Train the mind like a muscle']];
+const gallery = (list = GALLERY) => { const g = list.filter(([k]) => existsSync(`public/img/${k}.jpg`)); return g.length ? `<div class='gallery'>${g.map(([k, c]) => `<figure><img src='/img/${k}.jpg' alt='${c}' loading='lazy' decoding='async' width='800' height='450'><figcaption>${c}</figcaption></figure>`).join('')}</div>` : ''; };
 // Header photo for articles where one fits.
 const ARTICLE_PHOTO = { 'longevity-basics': 'longevity', 'walk-every-day': 'hiking', 'strength-twice-a-week': 'body', 'steady-sleep-and-wake-time': 'yoga', 'longevity-and-money': 'longevity', 'one-focused-block': 'mind', 'sunday-review': 'mind', 'decision-journal': 'mind', 'why-one-framework': 'mind', 'what-is-psx-alpha': 'money', 'five-numbers-before-a-psx-stock': 'money', 'index-is-not-your-portfolio': 'money', 'one-page-trade-plan': 'money', 'crypto-and-psx-risk': 'money' };
 // Compounding chart: real arithmetic (monthly saving, assumed yearly return), not market data.
@@ -214,7 +215,8 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
   ];
 
   // 1. Hero
-  let h = `<section class='hero hero-x'><div class='wrap hero-grid'><div>` +
+  const stars = Array.from({ length: 46 }, (_, i) => { const x = (i * 37.3) % 100, y = (i * 53.7) % 62, d = (i % 7) * .6, s = 1 + (i % 3); return `<i style='left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s}px;height:${s}px;animation-delay:${d}s'></i>`; }).join('');
+  let h = `<section class='hero hero-x'><div class='scifi' aria-hidden='true'><div class='stars'>${stars}</div><div class='horizon'></div><div class='neongrid'></div></div><div class='wrap hero-grid'><div>` +
     `<span class='eyebrow'>The Growth Framework</span>` +
     `<h1 style='margin-top:16px'>Grow Your <span class='m'>Mind.</span> <span class='b'>Body.</span> <span class='y'>Money.</span> Together.</h1>` +
     `<p class='lead'>A practical framework for building a better life — through clearer thinking, a stronger body, and smarter financial decisions.</p>` +
@@ -269,7 +271,7 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
     const ph = photo(k);
     h += `<section class='block pdeep ${COLORS[n]}${i % 2 ? ' band' : ''}${ph.cls}' id='pillar-${k}'${ph.style}><div class='wrap split'>` +
       `<div><span class='chip'><i></i>${n}</span><h2 style='margin-top:16px'>${title}</h2>${paras.map(p => `<p>${p}</p>`).join('')}</div>` +
-      `<div>${k === 'money' ? chart : ''}${list(items)}<p class='close-line'>${close}</p><div class='ctas'><a class='btn solid' href='/${k}'>Explore ${n}</a></div></div></div>${k === 'body' ? `<div class='wrap'>${gallery()}</div>` : ''}${k === 'mind' ? floaters : ''}</section>`;
+      `<div>${k === 'money' ? chart : ''}${list(items)}<p class='close-line'>${close}</p><div class='ctas'><a class='btn solid' href='/${k}'>Explore ${n}</a></div></div></div>${k === 'body' ? `<div class='wrap'>${gallery()}</div>` : ''}${k === 'mind' ? `<div class='wrap'>${gallery(MIND_GALLERY)}</div>${floaters}` : ''}</section>`;
   });
 
   // 3b. Stocks, gold and crypto (summaries; full detail lives on /money)
@@ -288,7 +290,8 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
     `<p class='meta' style='margin-top:18px'>Educational content only. Not financial advice. All investing carries risk, including the loss of capital.</p></div></section>`;
 
   // 4. The framework
-  h += `<section class='block' id='framework'><div class='wrap split'><div><span class='eyebrow'>The Framework</span><h2 style='margin-top:12px'>Three Areas. One Life.</h2>` +
+  const fph = photo('brain');
+  h += `<section class='block framework-sec${fph.cls}' id='framework'${fph.style}><div class='wrap split'><div><span class='eyebrow'>The Framework</span><h2 style='margin-top:12px'>Three Areas. One Life.</h2>` +
     `<p>Mind, Body and Money are often treated as separate subjects.</p><p class='big-line' style='font-size:clamp(28px,3.4vw,40px)'>They aren't.</p>` +
     `<p>Your financial decisions can affect your stress.<br>Your physical condition can affect your energy.<br>Your habits can affect both.</p>` +
     `<p>That's why The Growth Framework looks at them together.</p></div>` +

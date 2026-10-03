@@ -430,3 +430,26 @@ footer ul a{text-decoration:none;color:var(--muted)} footer ul a:hover{color:var
 .swing{width:100%;height:44px;display:block}
 .swing path{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .swing-stocks path{stroke:var(--body)} .swing-gold path{stroke:var(--money)} .swing-crypto path{stroke:#ff6b6b}
+
+/* ---------- sci-fi hero backdrop ---------- */
+.hero-x{isolation:isolate}
+.scifi{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.scifi .stars i{position:absolute;border-radius:50%;background:#fff;opacity:.55;box-shadow:0 0 6px rgba(255,255,255,.6)}
+.scifi .horizon{position:absolute;left:-10%;right:-10%;top:58%;height:2px;background:linear-gradient(90deg,transparent,var(--mind),var(--body),var(--money),transparent);box-shadow:0 0 24px 6px color-mix(in srgb,var(--mind) 45%,transparent),0 0 60px 18px color-mix(in srgb,var(--body) 18%,transparent);opacity:.9}
+.scifi .neongrid{position:absolute;left:-50%;right:-50%;top:58%;bottom:-40%;transform:perspective(420px) rotateX(62deg);transform-origin:top center;
+  background-image:linear-gradient(color-mix(in srgb,var(--mind) 55%,transparent) 1.5px,transparent 1.5px),linear-gradient(90deg,color-mix(in srgb,var(--body) 45%,transparent) 1.5px,transparent 1.5px);
+  background-size:60px 60px;-webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 75%);mask-image:linear-gradient(180deg,#000 0%,transparent 75%);opacity:.55}
+@media (prefers-reduced-motion:no-preference){
+  .scifi .neongrid{animation:gridmove 6s linear infinite}
+  @keyframes gridmove{to{background-position:0 60px,0 0}}
+  .scifi .stars i{animation:twinkle 4s ease-in-out infinite}
+  @keyframes twinkle{50%{opacity:.15}}
+}
+:root[data-theme='light'] .scifi{opacity:.45}
+@media (prefers-color-scheme:light){:root:not([data-theme='dark']) .scifi{opacity:.45}}
+:root[data-theme='light'] .scifi .stars,.light-hide{display:none}
+@media (prefers-color-scheme:light){:root:not([data-theme='dark']) .scifi .stars{display:none}}
+.hero-x .giant{z-index:-1}
+.framework-sec.has-photo::after{background:linear-gradient(90deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 85%,transparent) 50%,color-mix(in srgb,var(--bg) 60%,transparent) 100%)}
+.scifi::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 85%,transparent) 38%,transparent 70%)}
+@media (max-width:820px){.scifi::after{background:color-mix(in srgb,var(--bg) 55%,transparent)}}
