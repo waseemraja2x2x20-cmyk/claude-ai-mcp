@@ -234,3 +234,15 @@ footer ul a{text-decoration:none;color:var(--muted)} footer ul a:hover{color:var
 .crumbs a{color:var(--muted);text-decoration:none}
 .crumbs a:hover{color:var(--fg)}
 .notfound{padding-block:clamp(64px,12vw,140px)}
+
+/* email sign-up */
+.signup{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.signup label{display:block;font:700 19px var(--display);margin-bottom:12px}
+.signup-row{display:flex;gap:10px;flex-wrap:wrap}
+.signup input[type=email]{flex:1 1 220px;min-width:0;font:400 17px var(--display);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:12px 18px}
+.signup input[type=email]:focus{outline:2px solid var(--accent);outline-offset:1px}
+.signup button{cursor:pointer}
+.signup button[disabled]{opacity:.6;cursor:wait}
+.signup .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.signup-note{margin:10px 0 0;font:400 14px var(--mono);color:var(--faint)}
+.signup.ok .signup-note{color:var(--body)} .signup.err .signup-note{color:#ff6b6b}

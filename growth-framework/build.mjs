@@ -9,6 +9,9 @@ const NAME = 'The Growth Framework';
 const IG = 'https://www.instagram.com/breaking_patrens_growth/';
 const HANDLE = '@breaking_patrens_growth';
 const OUT = 'dist';
+// Email sign-up (Supabase). Both values are public by design: the key can only ADD rows to the
+// subscribers table (see supabase/subscribers.sql). Leave empty to hide the form.
+const SIGNUP = { url: '', key: '' };
 
 const COLORS = { Mind: 'mind', Body: 'body-p', Money: 'money' };
 const PSX = ['what-is-psx-alpha', 'five-numbers-before-a-psx-stock', 'index-is-not-your-portfolio', 'crypto-and-psx-risk', 'one-page-trade-plan'];
@@ -142,6 +145,16 @@ function igEmbeds() {
 }
 const socials = () => "<div class='socials'>" + SOCIAL.map(s => `<a class='social' href='${s.u}' target='_blank' rel='noopener'><i style='background:${s.bg}'>${s.k}</i><div><b>${s.n}</b><span>${esc(s.h)}</span></div></a>`).join('') + '</div>';
 
+function signupForm(source, heading = 'Get new articles by email') {
+  if (!SIGNUP.url || !SIGNUP.key) return '';
+  return `<form class='signup' data-url='${SIGNUP.url}' data-key='${SIGNUP.key}' data-source='${source}' novalidate>` +
+    `<label for='su-${source}'>${heading}</label>` +
+    `<div class='signup-row'><input id='su-${source}' type='email' name='email' autocomplete='email' inputmode='email' placeholder='you@example.com' required maxlength='254'>` +
+    `<input class='hp' type='text' name='website' tabindex='-1' autocomplete='off' aria-hidden='true'>` +
+    `<button class='btn solid' type='submit'>Sign up</button></div>` +
+    `<p class='signup-note' role='status' aria-live='polite'>New articles and free guides. No spam, unsubscribe any time.</p></form>`;
+}
+
 function psxBand(withLink, cls = 'block band money') {
   return `<section class='${cls}'><div class='wrap split'><div><span class='chip'><i></i>PSX Alpha</span><h2 style='margin-top:16px'>Research a PSX stock in <span class='acc'>five numbers</span>.</h2><p>PSX Alpha is a simple, repeatable way to look at Pakistan Stock Exchange companies before you read the headlines. Facts first, then opinion.</p>${withLink ? "<div class='ctas'><a class='btn solid' href='/psx'>Explore PSX Alpha</a></div>" : ''}</div>` +
     "<ol class='numbers'><li><div>Earnings per share (EPS) and its trend<small>Is profit per share growing over several years?</small></div></li><li><div>Price-to-earnings (P/E)<small>How much you pay for each rupee of profit.</small></div></li><li><div>Dividend yield and payout<small>Cash returned, and whether it is sustainable.</small></div></li><li><div>Debt against equity<small>How much of the business is borrowed.</small></div></li><li><div>Cash from operations<small>Do reported profits turn into real cash?</small></div></li></ol></div></section>";
@@ -174,7 +187,7 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
   h += `<section class='block' id='latest' style='padding-top:0'><div class='wrap'><div class='sechead'><h2>Latest articles</h2><a href='/articles'>All ${POSTS.length} articles →</a></div>${feature(latest[0])}<div class='grid'>${latest.slice(1).map(card).join('')}</div></div></section>`;
   h += psxBand(true);
   h += `<section class='block'><div class='wrap'><div class='sechead'><h2>Follow along</h2><a href='${IG}' target='_blank' rel='noopener'>${HANDLE} →</a></div><p style='color:var(--muted);margin:-12px 0 24px;max-width:40em'>New carousels and Reels every day on Instagram. Career and markets updates on LinkedIn.</p>${igEmbeds()}${socials()}</div></section>`;
-  h += `<section class='block band'><div class='wrap split'><div><span class='eyebrow'>Free</span><h2 style='margin-top:12px'>Free trading guides</h2></div><div><p>Get the <b>Trading Guidelines</b> and <b>Risk Management Guide</b> PDFs for free. Comment <b>GUIDE</b> on any trading post on Instagram and the guide is sent to you.</p><div class='ctas'><a class='btn solid' href='/guides'>See the guides</a></div></div></div></section>`;
+  h += `<section class='block band'><div class='wrap split'><div><span class='eyebrow'>Free</span><h2 style='margin-top:12px'>Free trading guides</h2></div><div><p>Get the <b>Trading Guidelines</b> and <b>Risk Management Guide</b> PDFs for free. Comment <b>GUIDE</b> on any trading post on Instagram and the guide is sent to you.</p><div class='ctas'><a class='btn ${SIGNUP.url ? 'ghost' : 'solid'}' href='/guides'>See the guides</a></div>${signupForm('home')}</div></div></section>`;
   page('/', 'index.html', {
     title: NAME + ' · Mind, Body & Money',
     description: 'Better life through mind, body and money. Practical notes on discipline, simple training, healthy food and sensible investing, plus PSX Alpha: a method for researching Pakistan Stock Exchange stocks.',
@@ -213,7 +226,7 @@ for (const name of ['Mind', 'Body', 'Money']) { // pillar pages
     `<div class='guide money'><div class='doc'></div><span class='status free'>Free</span><h3>Trading Guidelines</h3><p>Golden rules for PSX and crypto trading, a pre-trade checklist, a trading plan template and a journal format.</p></div>` +
     `<div class='guide money'><div class='doc'></div><span class='status free'>Free</span><h3>Risk Management Guide</h3><p>The 1% rule, position sizing with a PSX example, stop-losses, risk/reward and why big losses are hard to recover.</p></div>` +
     `<div class='guide mind'><div class='doc'></div><span class='status'>Coming soon</span><h3>Trading Journal &amp; Risk Planner</h3><p>A printable journal and planner to log every trade, review your week and keep your risk rules in one place.</p></div>` +
-    `</div><div class='how'><h3 style='font-size:24px'>How to get a free guide</h3><ol><li>Open any trading post on <a href='${IG}' target='_blank' rel='noopener'>${HANDLE}</a>.</li><li>Comment <b>GUIDE</b>.</li><li>The PDF is sent to you in your messages.</li></ol></div>` +
+    `</div><div class='how'><h3 style='font-size:24px'>How to get a free guide</h3><ol><li>Open any trading post on <a href='${IG}' target='_blank' rel='noopener'>${HANDLE}</a>.</li><li>Comment <b>GUIDE</b>.</li><li>The PDF is sent to you in your messages.</li></ol></div>${signupForm('guides', 'Or get the guides and new articles by email')}` +
     `<p class='meta' style='margin-top:20px'>Educational content, not financial advice.</p></div></section>`;
   page('/guides', 'guides.html', { title: 'Free trading guides', description: 'Free Trading Guidelines and Risk Management Guide PDFs for PSX and crypto traders in Pakistan.', og: 'guides', body: h });
 }
@@ -244,6 +257,7 @@ POSTS.forEach((p, i) => { // articles
   const newer = POSTS[i - 1], older = POSTS[i + 1], P = PILLARS[p.pillar];
   let h = `<div class='wrap ${COLORS[p.pillar]}'><article class='article'><nav class='crumbs' aria-label='Breadcrumb'><a href='/'>Home</a> / <a href='/${P.key}'>${p.pillar}</a></nav><div style='margin-top:22px'>${chip(p.pillar)}</div><h1>${esc(p.title)}</h1><p class='lede'>${esc(p.lede)}</p><div class='meta'><time datetime='${p.date}'>${fmt(p.date)}</time> · ${p.read} min read · By <a href='/about'>Waseem Raja</a></div><div class='content'>${p.body}</div>`;
   h += shareBar(url(postUrl(p)), p.title + ' · ' + NAME, 'Share this article');
+  h += signupForm('article');
   h += `<p class='disclaimer'>Educational content only. This is not medical or financial advice. Check facts with qualified professionals before you act.</p><nav class='nextprev' aria-label='More articles'>`;
   if (older) h += `<a href='${postUrl(older)}'><span>Older</span><strong>${esc(older.title)}</strong></a>`;
   if (newer) h += `<a href='${postUrl(newer)}'><span>Newer</span><strong>${esc(newer.title)}</strong></a>`;
