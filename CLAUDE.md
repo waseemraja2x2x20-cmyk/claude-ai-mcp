@@ -33,3 +33,12 @@ Instagram: @the_growth_frame_work (same handle on Facebook and Pinterest).
 ### Ideas waiting
 - Success Stories: one new part a week (recent fintechs, Pakistani startups; check current facts first).
 - Instagram carousel text from articles to bring readers to the site.
+
+### Owner decisions (do not ask again)
+- Scheduled routines (PSX daily brief weekdays, Success Story Mondays, pillar article Wednesdays, Instagram carousel text Fridays,
+  all 8:45 to 8:55am Pakistan time) are approved to publish automatically: commit and push to `main` without waiting for "go live".
+  Manual requests in a chat session still go to a branch and preview first unless the owner says otherwise.
+- Use free tools for media. Skills in `.claude/skills/`: `slides` (carousel/deck PNG + PDF, slideshow MP4 with music),
+  `video-clip` (short MP4 reels from animated HTML), `framer-motion` (Motion animation, vanilla and React). Outputs go in `media-out/` (git-ignored).
+- Music: generated `calm`/`bright` pads or tracks the owner supplies; never download unlicensed music.
+- Every new article needs a share image: run `node og.mjs` after `node build.mjs`.
