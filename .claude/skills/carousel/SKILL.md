@@ -49,10 +49,10 @@ length and CTA. Ask one short question only if something essential is missing.
 
 ## Output (give all of these)
 
-1. Concept and target audience 2. Shareability mechanism (why someone sends it, idea scores) 3. 5 hooks + the pick
-4. Slide-by-slide copy 5. Visual direction and layout spec 6. Motion spec 7. CTA 8. Caption 9. Hashtags/keywords
-10. Alt text per slide 11. Final shareability score + quality check 12. Export: PNGs + PDF in `media-out/<slug>/`
-13. Preview HTML. Send files with SendUserFile.
+1. Concept, target audience and desired outcome 2. Shareability mechanism (why someone sends it, idea scores)
+3. Format and structure chosen, and why 4. 5 hooks + the pick 5. Slide-by-slide copy 6. Visual direction and layout spec 7. Motion spec 8. CTA 9. Caption 10. Hashtags/keywords
+11. Alt text per slide 12. Final shareability score + quality check 13. Export: PNGs + PDF in `media-out/<slug>/`
+14. Preview HTML. Send files with SendUserFile.
 
 ## Format and length
 
@@ -62,7 +62,10 @@ length and CTA. Ask one short question only if something essential is missing.
 
 ## Structures (pick by content, not habit)
 
-- Default: Hook → Recognition/problem → Reveal → Insight → Insight → Insight → Practical framework → Memorable summary → Share/save trigger → One CTA
+Choose the structure that best fits the topic and the shareability mechanism; none is mandatory.
+
+- Share-first: Hook → Recognition/problem → Reveal → Insight → Insight → Insight → Practical framework → Memorable summary → Share/save trigger → One CTA (relatable, mindset and habit topics)
+- Explainer: Hook → Problem → Context → Idea 1 → Idea 2 → Idea 3 → Framework/Action → Saveable summary → Insight → CTA (topics that need background)
 - Hook → Story → Lesson → Framework → CTA (Success Stories)
 - Hook → Problem → 5 Mistakes → Fix → CTA
 - Hook → Myth → Evidence → Reality → Action (health and money myths)
@@ -222,8 +225,9 @@ from temporary gimmicks. Never copy another creator's design. Never trade clarit
 
 ## Caption and hashtags
 
-Caption: do not just repeat the slides. Add context, a short story, one expanded idea or an example, and at most
-one meaningful question; then sources and the one CTA;
+Caption: first line repeats the hook's promise in new words. Then do not just repeat the slides: 3 to 6 short lines
+adding context, a short story, one expanded idea or an example, and at most one meaningful question; then sources
+and the one CTA;
 link-in-bio pointer when there is an article. 5 to 10 hashtags mixing topic, Pakistan/South Asia and brand
 (`#TheGrowthFramework`), plus 3 to 5 plain keywords in the caption text for Instagram search.
 
