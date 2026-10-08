@@ -77,20 +77,21 @@ ${table(['Nutrient', 'What it does', 'Good sources'], [
 ${callout('The simple desi plate.', 'Half the plate vegetables or salad, a quarter protein (daal, chana, eggs, chicken or fish) and a quarter roti or rice, ideally whole-grain. Add dahi on the side.')}`,
       },
       {
-        id: 'vitamins-minerals', title: 'Vitamins and minerals', line: 'The micronutrients your body cannot make in enough amounts, and where to get them.',
+        id: 'vitamins-minerals', title: 'Vitamins and minerals', line: 'The micronutrients your body cannot make in enough amounts, where to get them and how much you need each day.',
         html: `<p>Vitamins and minerals are needed in small amounts, but the body cannot make most of them in the amounts it needs. A varied diet covers most people. These are the ones worth knowing:</p>
-${table(['Nutrient', 'Why the body needs it', 'Where to get it'], [
-  ['Vitamin D', 'Bones, muscles and immunity', 'Sunlight on the skin, eggs, oily fish, fortified foods'],
-  ['Vitamin B12', 'Nerves and red blood cells', 'Meat, fish, eggs, milk and dahi'],
-  ['Folate (B9)', 'Making new cells; important before and during pregnancy', 'Palak, methi, chana, daal'],
-  ['Vitamin C', 'Immunity, skin, and absorbing iron from plants', 'Amrood (guava), kinnow and other citrus, tomatoes'],
-  ['Vitamin A', 'Eyesight and immunity', 'Carrots, mango, sweet potato, palak, eggs'],
-  ['Iron', 'Carries oxygen in the blood', 'Red meat, liver, daal, chana, palak (eat with vitamin C)'],
-  ['Calcium', 'Bones, teeth, muscles and nerves', 'Milk, dahi, paneer, til (sesame), small fish eaten with bones'],
-  ['Magnesium', 'Muscle and nerve function, energy', 'Nuts, seeds, whole grains, pulses, leafy greens'],
-  ['Zinc', 'Immunity and healing', 'Meat, chana, pumpkin seeds, cashews'],
-  ['Iodine', 'Thyroid function', 'Iodised salt'],
+${table(['Nutrient', 'Why the body needs it', 'Where to get it', 'Daily amount (adults)'], [
+  ['Vitamin D', 'Bones, muscles and immunity', 'Sunlight on the skin, eggs, oily fish, fortified foods', '600 IU (15 mcg); 800 IU over 70'],
+  ['Vitamin B12', 'Nerves and red blood cells', 'Meat, fish, eggs, milk and dahi', '2.4 mcg'],
+  ['Folate (B9)', 'Making new cells; important before and during pregnancy', 'Palak, methi, chana, daal', '400 mcg; 600 mcg in pregnancy'],
+  ['Vitamin C', 'Immunity, skin, and absorbing iron from plants', 'Amrood (guava), kinnow and other citrus, tomatoes', 'Men 90 mg, women 75 mg (one guava covers it)'],
+  ['Vitamin A', 'Eyesight and immunity', 'Carrots, mango, sweet potato, palak, eggs', 'Men 900 mcg, women 700 mcg'],
+  ['Iron', 'Carries oxygen in the blood', 'Red meat, liver, daal, chana, palak (eat with vitamin C)', 'Men 8 mg, women 18 mg (ages 19–50), 27 mg in pregnancy'],
+  ['Calcium', 'Bones, teeth, muscles and nerves', 'Milk, dahi, paneer, til (sesame), small fish eaten with bones', '1,000 mg; 1,200 mg for women over 50 (a glass of milk is about 300 mg)'],
+  ['Magnesium', 'Muscle and nerve function, energy', 'Nuts, seeds, whole grains, pulses, leafy greens', 'Men 400–420 mg, women 310–320 mg'],
+  ['Zinc', 'Immunity and healing', 'Meat, chana, pumpkin seeds, cashews', 'Men 11 mg, women 8 mg'],
+  ['Iodine', 'Thyroid function', 'Iodised salt', '150 mcg; 220 mcg in pregnancy'],
 ])}
+<p><b>Upper limits.</b> More is not better. The daily upper limits for adults from all sources are: vitamin D 4,000 IU, vitamin A 3,000 mcg, iron 45 mg, zinc 40 mg and calcium 2,000–2,500 mg. For magnesium the limit is 350 mg a day from supplements only; magnesium in food does not count. Amounts are the US National Institutes of Health reference values, which are widely used; Pakistani guidance is similar.</p>
 ${callout('Test, do not guess.', 'Low vitamin D and iron are widely reported in South Asia, but the only way to know your own levels is a blood test. Take supplements on a doctor’s advice, because too much of some vitamins and minerals (such as vitamin A, vitamin D and iron) can be harmful.')}`,
       },
       {
@@ -99,15 +100,23 @@ ${callout('Test, do not guess.', 'Low vitamin D and iron are widely reported in 
 <ul><li><b>You lose them in sweat.</b> In a Pakistani summer, or during long training sessions, you lose fluid and sodium faster than usual.</li>
 <li><b>Food replaces most of them.</b> Potassium: bananas, potatoes, daal, dates, dahi, coconut water. Magnesium and calcium: see the table above.</li>
 <li><b>For heavy loss, use ORS.</b> After diarrhoea, vomiting or heavy sweating, oral rehydration salts made up exactly as the packet says are the safest choice.</li>
-<li><b>Do not overdo salt.</b> The WHO recommends less than 5 g of salt a day (about one teaspoon) for adults. Too much sodium raises blood pressure.</li></ul>
+<li><b>Do not overdo salt.</b> The WHO recommends less than 5 g of salt a day (about one teaspoon, or 2,000 mg of sodium) for adults. Too much sodium raises blood pressure.</li>
+<li><b>Aim for more potassium.</b> Adults need about 3,400 mg a day (men) and 2,600 mg (women). A banana has about 400 mg, a cup of cooked daal about 700 mg and a medium potato 600–900 mg.</li></ul>
 ${callout('Check first if you have a condition.', 'People with kidney disease, heart disease or high blood pressure should ask a doctor before using electrolyte drinks or supplements.')}`,
       },
       {
-        id: 'adaptogens', title: 'Adaptogens', line: 'Herbs such as ashwagandha that may help with stress. Promising, but the evidence is limited.',
-        html: `<p>Adaptogens are herbs said to help the body cope with stress. The best known are <b>ashwagandha</b>, <b>rhodiola</b>, <b>tulsi</b> (holy basil) and <b>ginseng</b>.</p>
-<ul><li><b>What the research says.</b> Some small studies suggest ashwagandha may lower feelings of stress and help sleep. Most studies are short and small, and products vary a lot in strength and quality.</li>
-<li><b>Safety.</b> Rare cases of liver injury have been reported with ashwagandha. It is not advised during pregnancy, and it can interact with thyroid, sedative, blood-sugar and immune-suppressing medicines.</li>
-<li><b>Where they fit.</b> At best, an add-on. They do not replace sleep, training, food and managing the cause of the stress.</li></ul>
+        id: 'adaptogens', title: 'Adaptogens', line: 'Ashwagandha, rhodiola, tulsi, ginseng and salajeet: what studies used, how strong the evidence is, and who should avoid them.',
+        html: `<p>Adaptogens are herbs said to help the body cope with stress. The best known are <b>ashwagandha</b>, <b>rhodiola</b>, <b>tulsi</b> (holy basil) and <b>ginseng</b>; in Pakistan, <b>salajeet</b> (shilajit) is also widely sold.</p>
+${table(['Herb', 'Studied for', 'Amount used in studies', 'Strength of evidence', 'Take care'], [
+  ['Ashwagandha', 'Stress, sleep', '250–600 mg root extract a day, for 6–8 weeks', 'Low to moderate: several small trials show less stress and better sleep', 'Rare liver injury. Avoid in pregnancy and with thyroid, sedative, diabetes or immune medicines'],
+  ['Rhodiola', 'Tiredness, stress', '200–600 mg extract a day', 'Low: few trials, mixed results', 'Can feel stimulating; avoid with bipolar disorder'],
+  ['Tulsi (holy basil)', 'Stress, blood sugar', 'Tea, or 300–600 mg extract a day', 'Very low: small, short studies', 'Avoid in pregnancy; may add to diabetes medicines'],
+  ['Panax ginseng', 'Tiredness, mental performance', '200–400 mg extract a day', 'Low: mixed results', 'Can cause poor sleep; interacts with warfarin and diabetes medicines'],
+  ['Salajeet (shilajit)', 'Energy, testosterone', '250–500 mg purified extract a day in small studies', 'Very low: a handful of small trials', 'Raw or unbranded salajeet can contain heavy metals and fungus; buy only lab-tested products'],
+])}
+<p>The amounts above are what studies used, not a recommendation. Product strength varies a lot, and supplements in Pakistan are not tested as strictly as medicines.</p>
+<ul><li><b>Where they fit.</b> At best, an add-on. They do not replace sleep, training, food and dealing with the cause of the stress.</li>
+<li><b>Give one a fair test.</b> If you try one, use one at a time for 6–8 weeks and note how you sleep and feel. Stop if you see no change or get side effects such as stomach upset, headache or yellowing of the skin or eyes.</li></ul>
 ${callout('Before you try one.', 'Talk to a doctor or pharmacist, especially if you take any regular medicine, and buy from a reputable brand.')}`,
       },
     ],
