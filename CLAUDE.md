@@ -38,7 +38,7 @@ Instagram: @the_growth_frame_work (same handle on Facebook and Pinterest).
 - Scheduled routines (PSX daily brief weekdays, Success Story Mondays, pillar article Wednesdays, Instagram carousel text Fridays,
   all 8:45 to 8:55am Pakistan time) are approved to publish automatically: commit and push to `main` without waiting for "go live".
   Manual requests in a chat session still go to a branch and preview first unless the owner says otherwise.
-- Use free tools for media. Skills in `.claude/skills/`: `slides` (carousel/deck PNG + PDF, slideshow MP4 with music),
+- Use free tools for media. Skills in `.claude/skills/`: `carousel` (Instagram Carousel Engine: `/carousel [topic]`, the full carousel system, performance log in `carousel/performance.md`), `slides` (carousel/deck PNG + PDF, slideshow MP4 with music),
   `video-clip` (short MP4 reels from animated HTML), `framer-motion` (Motion animation, vanilla and React). Outputs go in `media-out/` (git-ignored).
 - Music: generated `calm`/`bright` pads or tracks the owner supplies; never download unlicensed music.
 - Every new article needs a share image: run `node og.mjs` after `node build.mjs`.
