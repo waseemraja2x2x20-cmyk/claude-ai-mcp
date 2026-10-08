@@ -4,6 +4,7 @@ import { mkdirSync, writeFileSync, readFileSync, rmSync, cpSync, existsSync } fr
 import { createHash } from 'node:crypto';
 import { POSTS } from './src/posts.mjs';
 import { FOUNDATIONS } from './src/foundations.mjs';
+import { MIND_EXERCISES, ASANAS, ROUTINE, PRACTICE_SOURCES } from './src/practice.mjs';
 
 const SITE = 'https://thegrowthframework.live';
 const NAME = 'The Growth Framework';
@@ -453,15 +454,40 @@ const legacyRedirect = `<script>(function(){var h=location.hash.slice(1);if(!h||
   page('/patterns', 'patterns.html', { title: 'Breaking Patterns: behaviour, FOMO and better decisions', description: 'Articles on behaviour, mistakes, decision-making, FOMO and discipline, with practical ways to break unhelpful patterns.', body: h });
 }
 
+const practiceId = s => s.toLowerCase().replace(/[^a-z]+/g, '-');
+const practiceSources = list => `<p class='meta' style='margin-top:24px'>Sources: ${list.map(([t, u]) => `<a href='${u}' target='_blank' rel='noopener'>${esc(t)}</a>`).join('; ')}.</p>`;
+function mindExercises() { // shown on the Mind page
+  const ex = e => `<article class='xcard' id='${e.id}'><div class='xhead'><h3>${esc(e.name)}</h3><span class='xtime'>${e.time}</span></div><p class='xwhen'><b>When:</b> ${esc(e.when)}</p>` +
+    `<ol>${e.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol><p class='xnote'><b>Evidence:</b> ${esc(e.evidence)}</p><p class='xnote warn'><b>Note:</b> ${esc(e.caution)}</p></article>`;
+  return `<section class='block' id='exercises'><div class='wrap'><div class='sechead'><h2>Mind exercises</h2></div>` +
+    `<p class='lead-p'>Short exercises for a calmer, clearer mind. Each one says when to use it, what the evidence shows and when to take care.</p>` +
+    `<div class='breathe' aria-hidden='true'><div class='orb'></div><div class='cue'><span>Breathe in</span><span>Hold</span><span>Breathe out</span><span>Hold</span></div></div><p class='meta' style='text-align:center'>Box breathing guide: follow the circle, 4 seconds per step.</p>` +
+    `<div class='xgrid'>${MIND_EXERCISES.map(ex).join('')}</div>${practiceSources(PRACTICE_SOURCES.filter(x => !/Yoga/.test(x[0])))}</div></section>`;
+}
+function yogaAsanas() { // shown on the Body page
+  const as = a => `<article class='xcard' id='${practiceId(a.sanskrit)}'><div class='xhead'><h3>${esc(a.name)} <span class='skt'>${esc(a.sanskrit)}</span></h3><span class='xtime'>${a.hold}</span></div><p class='xwhen'><b>Works:</b> ${esc(a.works)}</p>` +
+    `<ol>${a.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol><p class='xnote warn'><b>Take care:</b> ${esc(a.avoid)}</p></article>`;
+  const name = s => ASANAS.find(a => a.sanskrit === s).name;
+  return `<section class='block' id='yoga'><div class='wrap'><div class='sechead'><h2>Yoga asanas for beginners</h2></div>` +
+    `<div class='prose' style='margin-bottom:28px'><p>Practise on a mat or rug, on an empty stomach or two to three hours after a meal. In summer, early morning is coolest; keep water nearby. During Ramadan, a gentle session after iftar works better than before it. Move slowly, breathe through the nose, and never push into sharp pain. Mild stretching is normal; pain is a signal to stop.</p>` +
+    `<p>What yoga can and cannot do: a 2022 Cochrane review found yoga gives small improvements in pain and movement for long-lasting low back pain, about the same as other exercise. It also helps flexibility and balance. It is not a cure for illness and does not replace treatment.</p></div>` +
+    `<div class='xgrid'>${ASANAS.map(as).join('')}</div>` +
+    `<h3 style='margin-top:40px' id='routine'>A 15-minute beginner routine</h3><ol class='routine'>${ROUTINE.map(([s, m]) => `<li><a href='#${practiceId(s)}'>${esc(name(s))}</a><span>${m} min</span></li>`).join('')}</ol>` +
+    `<p class='meta' style='margin-top:18px'>Three to four times a week is a good start. Add a minute to each pose when it feels easy. If you are pregnant, have high blood pressure, a heart condition, or a recent injury or surgery, talk to a doctor before starting.</p>` +
+    `${practiceSources(PRACTICE_SOURCES.filter(x => /Yoga/.test(x[0])))}</div></section>`;
+}
+
 for (const name of ['Mind', 'Body', 'Money']) { // pillar pages: foundations guide, then articles
   const P = PILLARS[name], F = FOUNDATIONS[name], list = POSTS.filter(p => p.pillar === name);
   const ph = photo(P.key);
   let h = `<div class='${COLORS[name]}'><div class='pagehero${ph.cls}'${ph.style}><section class='wrap pagehead'>${chip(name)}<h1 style='margin-top:18px'>${name}</h1><p>${F.intro}</p>` +
-    `<nav class='toc' aria-label='On this page'>${F.sections.map(s => `<a href='#${s.id}'>${s.title}</a>`).join('')}<a href='#articles'>Articles</a></nav></section></div>${line('margin-top:28px')}`;
+    `<nav class='toc' aria-label='On this page'>${F.sections.map(s => `<a href='#${s.id}'>${s.title}</a>`).join('')}<a href='#articles'>Articles</a>${name === 'Mind' ? "<a href='#exercises'>Mind exercises</a>" : name === 'Body' ? "<a href='#yoga'>Yoga asanas</a>" : ''}</nav></section></div>${line('margin-top:28px')}`;
   if (name === 'Body' && gallery()) h += `<section class='block' style='padding-bottom:0'><div class='wrap'>${gallery()}</div></section>`;
   h += `<section class='block'><div class='wrap'><div class='fdn'>` +
     F.sections.map((s, i) => `<section class='fdn-sec' id='${s.id}'><div class='fdn-side'><span class='num'>${String(i + 1).padStart(2, '0')}</span><h2>${s.title}</h2><p>${s.line}</p></div><div class='prose'>${s.html.replace('<!--COMPOUND-->', compoundChart())}</div></section>`).join('') +
     `</div><p class='disclaimer'>Educational content only. Not medical or financial advice. Talk to a doctor or a licensed adviser before acting.</p></div></section>`;
+  if (name === 'Mind') h += mindExercises();
+  if (name === 'Body') h += yogaAsanas();
   h += `<section class='block band' id='articles'><div class='wrap'><div class='sechead'><h2>${name} articles</h2><a href='/articles'>All articles →</a></div>${list.length ? feature(list[0]) + `<div class='grid'>${list.slice(1).map(card).join('')}</div>` : "<p class='empty'>New articles are on the way.</p>"}</div></section></div>`;
   const topics = F.sections.map(s => s.title.toLowerCase()).join(', ');
   page('/' + P.key, P.key + '.html', { title: `${name}: ${F.sections.map(s => s.title).slice(0, 3).join(', ')}`, description: `${F.intro} Covers ${topics}.`.slice(0, 300), og: P.key, body: h });

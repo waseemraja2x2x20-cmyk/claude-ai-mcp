@@ -551,3 +551,30 @@ footer ul a{text-decoration:none;color:var(--muted)} footer ul a:hover{color:var
 .sources li{margin:4px 0}
 .ai-sec .bp-card{border-left-color:var(--body)}
 .ai-sec .bp-card:hover h3{color:var(--body)}
+
+/* Mind exercises and yoga asanas (Mind and Body pages) */
+.lead-p{font:400 19px/1.55 var(--text);color:var(--muted);max-width:720px;margin:0 0 8px}
+.xgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:18px;margin-top:22px}
+.xcard{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:14px;padding:20px 22px;scroll-margin-top:90px}
+.xhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.xhead h3{font:700 21px/1.2 var(--display);margin:0}
+.skt{display:block;font:italic 400 15px var(--text);color:var(--muted);margin-top:4px}
+.xtime{font:500 13px var(--mono);color:var(--c);white-space:nowrap}
+.xwhen{font:400 16px/1.5 var(--text);color:var(--muted);margin:10px 0}
+.xcard ol{margin:0 0 12px;padding-left:20px;font:400 17px/1.55 var(--text)}
+.xcard li{margin-bottom:4px}
+.xnote{font:400 15px/1.5 var(--text);color:var(--muted);margin:8px 0 0}
+.xnote.warn{border-left:2px solid var(--money);padding-left:10px}
+.breathe{position:relative;width:200px;height:200px;margin:28px auto 10px;display:grid;place-items:center}
+.orb{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--c) 45%,transparent),color-mix(in srgb,var(--c) 10%,transparent));border:2px solid var(--c);transform:scale(.55);animation:boxbreath 16s ease-in-out infinite}
+.cue{position:relative;font:600 18px var(--display)}
+.cue span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap;opacity:0;animation:cue 16s infinite}
+.cue span:nth-child(2){animation-delay:4s} .cue span:nth-child(3){animation-delay:8s} .cue span:nth-child(4){animation-delay:12s}
+@keyframes boxbreath{0%{transform:scale(.55)}25%,50%{transform:scale(1)}75%,100%{transform:scale(.55)}}
+@keyframes cue{0%,24%{opacity:1}25%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.orb{animation:none;transform:scale(.8)}.cue span{animation:none}.cue span:first-child{opacity:1}}
+.routine{list-style:none;counter-reset:r;padding:0;margin:16px 0 0;display:grid;gap:8px;max-width:560px}
+.routine li{counter-increment:r;display:flex;justify-content:space-between;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font:500 16px var(--display)}
+.routine li::before{content:counter(r);font:500 13px var(--mono);color:var(--c);min-width:22px}
+.routine li a{flex:1;color:var(--fg);text-decoration:none}
+.routine li span{font:400 14px var(--mono);color:var(--muted)}
