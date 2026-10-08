@@ -243,7 +243,8 @@ every claim supported and sourced · looks like our brand, not a copied trend ·
 Render with the `slides` skill: one HTML of `<section class="slide">` at 1080×1350, then
 `node .claude/skills/slides/render-slides.mjs media-out/<slug>/slides.html media-out/<slug> --w 1080 --h 1350`.
 Open every PNG with Read and check for clipping, overflow and safe-area violations before sending.
-Optional Reel: `slides/slideshow.mjs` (still slides) or the `video-clip` skill (animated). Save caption, hashtags
+Optional Reel: `slides/slideshow.mjs` (still slides) or the `video-clip` skill (animated).
+Live carousel (every slide a looping video with one continuing song): the `live-carousel` skill. Save caption, hashtags
 and alt text to `media-out/<slug>/caption.md`.
 
 ## Never
