@@ -3,6 +3,8 @@ name: video-clip
 description: Make short MP4 video clips (Reels, Shorts, Stories, TikTok, animated posts) with free tools: an animated HTML page recorded by Playwright and encoded with ffmpeg. Use for any short video, reel, animated text clip or motion graphic request.
 ---
 
+> Health topics (breathing, stress, yoga, minerals, supplements, adaptogens, fruit, herbs): load the `health-library` skill first and use only its facts, evidence wording and safety notes.
+
 # Short video clips (free tools: HTML, Motion, Playwright, ffmpeg)
 
 1. Write one HTML page that is the whole clip, animated with Motion (see the `framer-motion` skill).

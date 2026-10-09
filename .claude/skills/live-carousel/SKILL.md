@@ -3,6 +3,8 @@ name: live-carousel
 description: Live (video) Instagram carousels with free tools. Every slide is a short looping 1080x1350 MP4 with beat-locked motion and one song that continues from slide to slide. Use when the owner asks for a live, animated, moving or video carousel, or to bring an existing carousel to life.
 ---
 
+> Health topics (breathing, stress, yoga, minerals, supplements, adaptogens, fruit, herbs): load the `health-library` skill first and use only its facts, evidence wording and safety notes.
+
 # Live carousel (free tools: HTML, Motion, Playwright, ffmpeg, numpy)
 
 Instagram allows videos inside a carousel. Here each slide is its own looping MP4 (1080×1350, 4:5) and its music is the

@@ -3,6 +3,8 @@ name: slides
 description: Make slides as images and PDF with free tools (HTML + Playwright). Use for Instagram carousels, presentation decks, quote cards, infographics and any slide or carousel request for The Growth Framework.
 ---
 
+> Health topics (breathing, stress, yoga, minerals, supplements, adaptogens, fruit, herbs): load the `health-library` skill first and use only its facts, evidence wording and safety notes.
+
 # Slides (free tools: HTML, Playwright, Chromium)
 
 Write the slides as one HTML file, then render each `.slide` to PNG and all slides to one PDF:
