@@ -77,6 +77,35 @@ ${table(['Nutrient', 'What it does', 'Good sources'], [
 ${callout('The simple desi plate.', 'Half the plate vegetables or salad, a quarter protein (daal, chana, eggs, chicken or fish) and a quarter roti or rice, ideally whole-grain. Add dahi on the side.')}`,
       },
       {
+        id: 'fruit-herbs', title: 'Fruit and herbs', line: 'What common Pakistani fruits and kitchen herbs actually do for health, and where the claims go too far.',
+        html: `<p>Fruit gives fibre, vitamins, potassium and plant compounds called polyphenols. People who eat more fruit and vegetables have lower rates of heart disease and stroke in large studies, and the WHO advises at least <b>400 g a day</b> of fruit and vegetables together, about five handfuls. Whole fruit is better than juice, because juice loses most of the fibre and is easy to drink in large amounts.</p>
+${table(['Fruit', 'Main value', 'What it helps with', 'Good to know'], [
+  ['Amrood (guava)', 'Very high vitamin C (one fruit covers a day), fibre', 'Immunity, absorbing iron from daal and palak', 'One of the best-value fruits in Pakistan'],
+  ['Kinnow and malta', 'Vitamin C, folate, potassium', 'Immunity, skin', 'Eat the segments; the white pith has fibre'],
+  ['Kela (banana)', 'Potassium (about 400 mg), quick carbs', 'Energy before training, replacing potassium after sweating', 'Ripe bananas raise blood sugar faster'],
+  ['Aam (mango)', 'Vitamin A, vitamin C', 'Eyesight, immunity', 'High in sugar; one at a time in season, not three'],
+  ['Anar (pomegranate)', 'Polyphenols, fibre, vitamin C', 'May slightly lower blood pressure in small trials', 'Eat the seeds rather than sweetened juice'],
+  ['Saib (apple)', 'Fibre (pectin), vitamin C', 'Fullness, digestion', 'Keep the skin on'],
+  ['Khajoor (dates)', 'Fibre, potassium, quick energy', 'Breaking a fast, energy before exercise', 'Calorie-dense: 2–3 is a serving'],
+  ['Papita (papaya)', 'Vitamin C, vitamin A, fibre', 'Digestion and regular bowels', 'Avoid unripe papaya in pregnancy'],
+  ['Jamun', 'Polyphenols, vitamin C', 'Sometimes promoted for blood sugar; human evidence is weak', 'Does not replace diabetes medicine'],
+  ['Tarbooz and kharbooza (melons)', 'Mostly water, some vitamin A and C', 'Fluids in summer heat', 'Wash the skin before cutting'],
+])}
+<p>Kitchen herbs and spices add flavour without salt or sugar, and several have been studied for health. The effects in studies usually come from concentrated extracts or supplement doses, not the pinch used in cooking, and most trials are small.</p>
+${table(['Herb or spice', 'What studies looked at', 'What the evidence shows', 'Take care'], [
+  ['Haldi (turmeric)', 'Joint pain, inflammation', 'Small trials of curcumin extract show modest relief in knee osteoarthritis. Curcumin is poorly absorbed; black pepper helps', 'High-dose supplements have been linked to rare liver injury; may add to blood thinners'],
+  ['Adrak (ginger)', 'Nausea', 'Reasonable evidence for nausea in pregnancy and after surgery, at about 1 g a day', 'Large amounts can cause heartburn'],
+  ['Lehsan (garlic)', 'Blood pressure, cholesterol', 'Garlic supplements lower blood pressure slightly in people with high blood pressure', 'Supplements may increase bleeding with blood thinners or before surgery'],
+  ['Darchini (cinnamon)', 'Blood sugar', 'Mixed results; any effect is small', 'Cassia cinnamon, the common type, contains coumarin, which can harm the liver in large daily amounts'],
+  ['Methi dana (fenugreek seeds)', 'Blood sugar', 'Small trials show modest drops in blood sugar', 'Can add to diabetes medicine and cause low sugar; avoid large amounts in pregnancy'],
+  ['Kalonji (black seed)', 'Blood sugar, cholesterol, blood pressure', 'Small, mostly short trials with modest effects', 'Supplement quality varies; check with a doctor if you take regular medicine'],
+  ['Podina (mint)', 'Irritable bowel', 'Enteric-coated peppermint oil capsules ease IBS symptoms in trials', 'Can worsen heartburn'],
+  ['Saunf and ajwain', 'Gas and bloating', 'Traditional use; very little modern research', 'Safe in food amounts'],
+])}
+${callout('Food first, then talk to a doctor.', 'Fruit and herbs are part of a healthy diet, not treatments. If you have diabetes, high blood pressure, kidney or liver disease, are pregnant, or take regular medicine, ask a doctor before taking herbal supplements or large amounts of any herb.')}
+<p class='meta' style='font-size:13px;line-height:1.5'>Sources: WHO healthy diet fact sheet; US National Center for Complementary and Integrative Health (NCCIH) herb fact sheets for turmeric, ginger, garlic, cinnamon, fenugreek and peppermint oil; Aune D et al., International Journal of Epidemiology, 2017, on fruit and vegetables and disease risk.</p>`,
+      },
+      {
         id: 'vitamins-minerals', title: 'Vitamins and minerals', line: 'The micronutrients your body cannot make in enough amounts, where to get them and how much you need each day.',
         html: `<p>Vitamins and minerals are needed in small amounts, but the body cannot make most of them in the amounts it needs. A varied diet covers most people. These are the ones worth knowing:</p>
 ${table(['Nutrient', 'Why the body needs it', 'Where to get it', 'Daily amount (adults)'], [
