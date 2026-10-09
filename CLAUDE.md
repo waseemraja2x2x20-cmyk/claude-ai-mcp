@@ -39,6 +39,6 @@ Instagram: @the_growth_frame_work (same handle on Facebook and Pinterest).
   all 8:45 to 8:55am Pakistan time) are approved to publish automatically: commit and push to `main` without waiting for "go live".
   Manual requests in a chat session still go to a branch and preview first unless the owner says otherwise.
 - Use free tools for media. Skills in `.claude/skills/`: `carousel` (Instagram Carousel Engine: `/carousel [topic]`, the full carousel system, performance log in `carousel/performance.md`), `live-carousel` (every carousel slide a looping 1080x1350 video with one beat-locked song), `slides` (carousel/deck PNG + PDF, slideshow MP4 with music),
-  `video-clip` (short MP4 reels from animated HTML), `framer-motion` (Motion animation, vanilla and React), `trigger-dev` (Trigger.dev background jobs, schedules and email sequences; references in the skill folder). Outputs go in `media-out/` (git-ignored).
+  `video-clip` (short MP4 reels from animated HTML), `framer-motion` (Motion animation, vanilla and React), `trigger-dev` (Trigger.dev background jobs, schedules and email sequences; references in the skill folder), `n8n` (n8n custom nodes, credentials and triggers), `youtube-edit` (clean talking-head edits with local Whisper + ffmpeg). Outputs go in `media-out/` (git-ignored).
 - Music: generated `calm`/`bright` pads or tracks the owner supplies; never download unlicensed music.
 - Every new article needs a share image: run `node og.mjs` after `node build.mjs`.
