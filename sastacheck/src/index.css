@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #0e6b45;
+  --primary-light: #3fb37f;
+  --accent: #e2a32b;
+  --ink: #0b1410;
+  --paper: #f3f5f1;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { @apply bg-paper text-ink font-sans antialiased; }
+h1, h2, h3 { text-wrap: balance; }
+::selection { background: var(--accent); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+@layer components {
+  .glass { @apply bg-ink/70 backdrop-blur-xl border border-white/10; }
+  .eyebrow { @apply font-mono text-[11px] uppercase tracking-[0.18em]; }
+  .magnetic-btn {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display font-bold text-sm
+      transition-transform duration-300 will-change-transform;
+  }
+  .magnetic-btn:hover { transform: translateY(-2px) scale(1.02); }
+  .magnetic-btn:active { transform: scale(0.98); }
+  .btn-primary { @apply bg-accent text-ink shadow-[0_10px_30px_-10px_rgba(226,163,43,.7)]; }
+  .btn-ghost { @apply border border-white/25 text-white hover:bg-white/10; }
+  .btn-dark { @apply bg-ink text-white; }
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .grid-bg-light {
+    background-image:
+      linear-gradient(to right, rgba(11,20,16,.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11,20,16,.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .card { @apply rounded-4xl bg-white border border-ink/10 shadow-[0_20px_60px_-30px_rgba(11,20,16,.35)]; }
+}
+
+/* Signature animation: rupee coins dropping onto the receipt line; each landing makes a ripple. */
+@keyframes rain-fall {
+  0%   { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+  12%  { opacity: 1; }
+  78%  { transform: translateY(150px) rotate(320deg); opacity: 1; }
+  80%  { opacity: 0; }
+  100% { transform: translateY(150px) rotate(320deg); opacity: 0; }
+}
+@keyframes rain-ripple {
+  0%, 76% { transform: scale(0.2); opacity: 0; }
+  80% { opacity: .9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes rain-fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes float-y { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-14px) } }
+@keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(63,179,127,.6) } 50% { box-shadow: 0 0 0 8px rgba(63,179,127,0) } }
+.anim-fall { animation: rain-fall 2.6s cubic-bezier(.5,0,.75,.4) infinite; }
+.anim-ripple { animation: rain-ripple 2.6s ease-out infinite; }
+.anim-fadein { animation: rain-fadein .6s ease both; }
+.anim-float { animation: float-y 6s ease-in-out infinite; }
+.pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

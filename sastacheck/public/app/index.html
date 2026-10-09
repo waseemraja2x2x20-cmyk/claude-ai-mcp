@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="SastaCheck: compare grocery prices across Pakistani stores and markets, unit by unit, with price history and a monthly basket planner.">
+<meta name="theme-color" content="#0e6b45">
+<title>SastaCheck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap">
+<style>
+/* Layout: one column app shell. Sticky top bar with city + tabs; each tab is a single working panel. Prices read like a kiryana receipt (mono, dotted leaders). */
+:root{
+  --bg:#f3f5f1; --surface:#ffffff; --ink:#18231c; --muted:#5b685f; --line:#dbe2da;
+  --green:#0e6b45; --green-ink:#ffffff; --haldi:#e2a32b; --haldi-soft:#fbefd4;
+  --good:#127a4a; --warn:#a86a00; --bad:#b4372b; --chip:#e8eee6;
+  --display:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --body:'IBM Plex Sans','Segoe UI',Roboto,Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --urdu:'Noto Nastaliq Urdu','Jameel Noori Nastaleeq','Urdu Typesetting',serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1512; --surface:#18201b; --ink:#e6ece7; --muted:#9aa89f; --line:#2a352e;
+  --green:#3fb37f; --green-ink:#08130d; --haldi:#f0b947; --haldi-soft:#3a2f17;
+  --good:#4cc78b; --warn:#f0b947; --bad:#f07a6e; --chip:#222c25; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1512; --surface:#18201b; --ink:#e6ece7; --muted:#9aa89f; --line:#2a352e;
+  --green:#3fb37f; --green-ink:#08130d; --haldi:#f0b947; --haldi-soft:#3a2f17;
+  --good:#4cc78b; --warn:#f0b947; --bad:#f07a6e; --chip:#222c25; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--body);padding-inline:16px}
+.wrap{max-width:860px;margin:0 auto;padding-block:0 48px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+.ur{font-family:var(--urdu);direction:rtl;line-height:2.1}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--haldi);outline-offset:2px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin-inline:-16px;padding:12px 16px 0;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap;max-width:860px;margin:0 auto}
+.logo{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.logo b{font:800 24px/1 var(--display);letter-spacing:.06em;color:var(--green)}
+.logo .ur{font-size:20px;line-height:1.4;color:var(--haldi)}
+.city{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.city select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.tabs{display:flex;gap:4px;overflow-x:auto;max-width:860px;margin:10px auto 0;scrollbar-width:none}
+.tabs button{border:0;background:none;padding:10px 12px;font:600 14px var(--body);color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--haldi)}
+.tabs .count{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--green);color:var(--green-ink);font:500 12px/18px var(--mono)}
+
+.banner{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--haldi-soft);font-size:14px}
+.panel{display:grid;gap:18px;margin-top:20px}
+.lead{color:var(--muted);max-width:62ch;margin:6px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 14px;font-weight:600}
+.btn.primary{background:var(--green);border-color:var(--green);color:var(--green-ink)}
+.btn.small{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.field{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+.field input,.field select,.field textarea{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:15px;width:100%}
+.search{width:100%;background:var(--surface);border:2px solid var(--green);border-radius:12px;padding:13px 14px;font-size:17px}
+.eyebrow{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;background:var(--chip);color:var(--muted);white-space:nowrap}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.sample{color:var(--warn)} .pill.community{color:var(--green)} .pill.receipt{color:var(--good)} .pill.old{color:var(--muted)}
+.ok{color:var(--good)} .muted{color:var(--muted)} .bad{color:var(--bad)}
+.empty{padding:20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+
+/* product list */
+.plist{display:grid;gap:8px}
+.pitem{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.pitem[aria-current="true"]{border-color:var(--green);box-shadow:inset 3px 0 0 var(--green)}
+.pitem .name{font-weight:600}
+.pitem .ur{font-size:14px;color:var(--muted);line-height:1.8}
+.pitem .from{text-align:right;font-size:13px;color:var(--muted)}
+.pitem .from b{display:block;font:500 16px var(--mono);color:var(--ink)}
+
+/* receipt-style price table */
+.receipt{display:grid;gap:2px}
+.rline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.rline:last-child{border-bottom:0}
+.rline .store{display:flex;align-items:baseline;gap:8px;min-width:0}
+.rline .store span:first-child{font-weight:600}
+.rline .price{font:500 17px var(--mono);text-align:right}
+.rline .meta{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--muted)}
+.rline.best .price{color:var(--good)}
+.rline.best .store span:first-child::after{content:" · cheapest";font-weight:500;color:var(--good);font-size:12px}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font:11px var(--mono)}
+
+/* store ranking */
+.rank{display:grid;gap:6px}
+.rankrow{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center}
+.bar{height:8px;border-radius:4px;background:var(--chip);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--green)}
+
+/* basket */
+.bline{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.qty button{border:0;background:var(--chip);width:30px;height:30px}
+.qty span{min-width:28px;text-align:center}
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.opt{display:grid;gap:8px;align-content:start}
+.opt.rec{border-color:var(--green);box-shadow:inset 0 3px 0 var(--green)}
+.opt .total{font:600 24px var(--mono)}
+.opt ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--muted)}
+.tag{font:600 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
+
+/* report / AI */
+.drop{display:grid;place-items:center;gap:6px;padding:22px;border:2px dashed var(--line);border-radius:12px;text-align:center;color:var(--muted)}
+.drop.over{border-color:var(--green);background:var(--chip)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font:600 12px var(--body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+td input,td select{width:100%;min-width:90px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:6px}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+html{color-scheme:light}
+.auth{display:flex;gap:6px;align-items:center;font-size:13px}
+.signin{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:30;padding:16px}
+.signin .card{max-width:380px;width:100%;display:grid;gap:12px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <a class="logo" href="/" style="text-decoration:none"><b>SASTACHECK</b><span class="ur">سستا چیک</span></a>
+    <div class="auth"><span id="who" class="muted"></span><button class="btn small" id="authBtn">Sign in</button></div>
+    <label class="city" for="city">City
+      <select id="city"><option>Rawalpindi</option><option>Islamabad</option><option>Lahore</option><option>Karachi</option></select>
+    </label>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="basket" aria-selected="true">Compare my basket<span class="count" id="bcount" hidden></span></button>
+    <button role="tab" data-tab="search">Prices</button>
+    <button role="tab" data-tab="report">Report a price</button>
+    <button role="tab" data-tab="assistant">AI planner</button>
+    <button role="tab" data-tab="manage" id="manageTab" hidden>Manage</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="banner" id="offline" hidden>Prices could not load. Check your internet connection and reload the page.</div>
+
+  <!-- PRICES -->
+  <section class="panel" id="tab-search" hidden>
+    <div>
+      <h1 style="font-size:clamp(24px,5vw,34px)">Aaj kahan sasta hai?</h1>
+      <p class="lead">Search any grocery item in English, Roman Urdu or Urdu. Prices are compared per kg, litre or piece, and every price keeps its history.</p>
+    </div>
+    <input class="search" id="q" type="search" placeholder="Search: cheeni, آٹا, Dalda oil, anday…" autocomplete="off">
+    <div class="row" id="cats"></div>
+    <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;align-items:start">
+      <div class="plist" id="plist"></div>
+      <div id="detail"></div>
+    </div>
+    <div class="card" id="rankCard">
+      <div class="row"><h2 style="font-size:18px" class="grow">Cheapest store for a full basket</h2><span class="eyebrow" id="rankCity"></span></div>
+      <p class="muted" style="margin:4px 0 12px;font-size:13.5px">One of each item that store has a price for, compared on the items every listed store stocks.</p>
+      <div class="rank" id="rank"></div>
+    </div>
+  </section>
+
+  <!-- BASKET -->
+  <section class="panel" id="tab-basket">
+    <div>
+      <h1 style="font-size:clamp(24px,5vw,34px)">Sasta kahan hai?</h1>
+      <p class="lead">Add what you buy each month. SastaCheck finds the cheapest single store, the cheapest item by item, and the best practical plan using at most two stores.</p>
+    </div>
+    <div class="card">
+      <div class="field"><label for="badd">Add an item</label>
+        <div class="row"><select id="badd" class="grow"></select><button class="btn primary" id="baddBtn">Add</button></div>
+      </div>
+      <div id="blines" style="margin-top:10px"></div>
+    </div>
+    <div class="options" id="bopts"></div>
+  </section>
+
+  <!-- REPORT -->
+  <section class="panel" id="tab-report" hidden>
+    <div>
+      <h1 style="font-size:28px">Report a price</h1>
+      <p class="lead">Every report is kept with its date and store, so the price history grows with each one. Nothing is overwritten.</p>
+    </div>
+    <div class="card">
+      <h2 style="font-size:17px">Upload a receipt</h2>
+      <p class="muted" style="margin:4px 0 12px;font-size:13.5px">Claude reads the store, date and prices from the photo. You check each line before saving.</p>
+      <label class="drop" id="drop" for="rfile">
+        <strong>Choose a receipt photo</strong><span>or drop it here (JPG or PNG)</span>
+      </label>
+      <input type="file" id="rfile" accept="image/*" hidden>
+      <div id="rstatus" class="muted" style="margin-top:10px"></div>
+      <div id="rreview"></div>
+    </div>
+    <div class="card">
+      <h2 style="font-size:17px">Add one price</h2>
+      <form id="mform" class="grid2" style="margin-top:12px">
+        <div class="field"><label for="mprod">Item</label><select id="mprod"></select></div>
+        <div class="field"><label for="mstore">Store or market</label><select id="mstore"></select></div>
+        <div class="field" id="mnewWrap" hidden><label for="mnew">New store or market name</label><input id="mnew" placeholder="e.g. Raja Bazaar, Commercial Market"></div>
+        <div class="field"><label for="mprice">Price paid (Rs)</label><input id="mprice" type="number" min="1" step="1" inputmode="numeric" required></div>
+        <div class="field"><label for="mdate">Date</label><input id="mdate" type="date" required></div>
+        <div class="row" style="grid-column:1/-1"><button class="btn primary" id="msave">Save price</button><span class="muted" style="font-size:13px" id="mhint"></span></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- AI PLANNER -->
+  <section class="panel" id="tab-assistant" hidden>
+    <div>
+      <h1 style="font-size:28px">AI grocery planner</h1>
+      <p class="lead">Tell it your budget and household. It builds a monthly basket from items with real prices in your city. Totals are worked out by the app, not by the AI.</p>
+    </div>
+    <div class="card">
+      <form id="aform" class="grid2">
+        <div class="field"><label for="abudget">Monthly budget (Rs)</label><input id="abudget" type="number" min="500" step="100" value="15000" inputmode="numeric"></div>
+        <div class="field"><label for="apeople">People at home</label><input id="apeople" type="number" min="1" max="20" value="4" inputmode="numeric"></div>
+        <div class="field" style="grid-column:1/-1"><label for="anotes">Anything else</label><input id="anotes" placeholder="e.g. no chicken, more tea, children at home"></div>
+        <div class="row" style="grid-column:1/-1"><button class="btn primary" id="arun">Plan my basket</button><span class="muted" id="astatus" style="font-size:13px"></span></div>
+      </form>
+    </div>
+    <div id="aout"></div>
+  </section>
+
+  <!-- MANAGE -->
+  <section class="panel" id="tab-manage" hidden>
+    <div>
+      <h1 style="font-size:28px">Manage</h1>
+      <p class="lead">Only editors see this tab.</p>
+    </div>
+    <div class="card" id="mstats"></div>
+  </section>
+</main>
+<div class="toast" id="toast" hidden></div>
+<div class="signin" id="signin" hidden>
+  <form class="card" id="signinForm">
+    <h2 style="font-size:20px">Sign in to SastaCheck</h2>
+    <p class="muted" style="margin:0;font-size:14px">Signing in lets you report prices, read receipts and save your basket. We email you a one-time sign-in link; no password needed.</p>
+    <div class="field"><label for="email">Email</label><input id="email" type="email" required autocomplete="email"></div>
+    <div class="row"><button class="btn primary" id="sendLink">Email me a link</button><button class="btn" type="button" id="closeSignin">Cancel</button></div>
+    <p class="muted" id="signinMsg" style="margin:0;font-size:13.5px"></p>
+  </form>
+</div>
+<script src="config.js"></script>
+<script src="supabase.js"></script>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const fmt=n=>"Rs "+Math.round(n).toLocaleString("en-PK");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+const days=iso=>Math.floor((Date.now()-new Date(iso+"T12:00:00").getTime())/864e5);
+const store={get(k,d){try{const v=localStorage.getItem("sastacheck:"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("sastacheck:"+k,JSON.stringify(v))}catch(e){}}};
+
+const S={city:store.get("city","Rawalpindi"),tab:"search",q:"",cat:"All",sel:null,
+  products:[],stores:[],obs:[],basket:store.get("basket",{}),db:null,user:null,uid:null,canEdit:false,ai:null,aiImages:false};
+
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,3200)}
+
+/* ---------- derived data ---------- */
+const P=id=>S.products.find(p=>p.id===id);
+const ST=id=>S.stores.find(s=>s.id===id);
+function unitLabel(p){return p.unit==="pcs"?"pc":p.unit}
+function unitPrice(p,price){return price/(p.pack||1)}
+// latest price per product per store in the selected city
+function latest(){
+  const m={};
+  for(const o of S.obs){ if(o.city!==S.city) continue;
+    for(const it of (o.items||[])){ const k=it.pid+"|"+o.sid; const cur=m[k];
+      if(!cur||o.at>cur.at||(o.at===cur.at&&(o.ts||0)>(cur.ts||0))) m[k]={pid:it.pid,sid:o.sid,price:it.price,at:o.at,source:o.source,obs:o.id,by:o.by,ts:o.ts||0};}}
+  return m;
+}
+function pricesFor(pid,L){return S.stores.map(s=>L[pid+"|"+s.id]).filter(Boolean).sort((a,b)=>a.price-b.price)}
+function search(q){
+  q=q.trim().toLowerCase(); let list=S.products;
+  if(S.cat!=="All") list=list.filter(p=>p.cat===S.cat);
+  if(!q) return list;
+  const words=q.split(/\s+/);
+  return list.map(p=>{const hay=[p.en,p.ur,p.brand,p.cat,...(p.aliases||[])].join(" ").toLowerCase();
+    const score=words.reduce((s,w)=>s+(hay.includes(w)?(p.en.toLowerCase().startsWith(w)?3:1):-5),0);return{p,score}})
+    .filter(x=>x.score>0).sort((a,b)=>b.score-a.score).map(x=>x.p);
+}
+
+/* ---------- render: prices ---------- */
+function renderCats(){
+  const cats=["All",...new Set(S.products.map(p=>p.cat))];
+  $("#cats").innerHTML=cats.map(c=>`<button class="pill" style="cursor:pointer;${c===S.cat?'background:var(--green);color:var(--green-ink)':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+}
+function renderList(){
+  const L=latest(), list=search(S.q);
+  if(!S.products.length){$("#plist").innerHTML=`<div class="empty">No items yet. The item list loads from the shared database.</div>`;$("#detail").innerHTML="";return}
+  if(!list.length){$("#plist").innerHTML=`<div class="empty">No item matches “${esc(S.q)}”. Try another spelling, such as cheeni or sugar.</div>`;return}
+  if(!S.sel||!list.find(p=>p.id===S.sel)) S.sel=list[0].id;
+  $("#plist").innerHTML=list.map(p=>{const pr=pricesFor(p.id,L);const lo=pr[0];
+    return `<button class="pitem" data-pid="${p.id}" aria-current="${p.id===S.sel}"><div style="min-width:0"><div class="name">${esc(p.en)}</div><div class="ur">${esc(p.ur||"")}</div></div>
+    <div class="from">${lo?`from<b>${fmt(lo.price)}</b>${esc(ST(lo.sid)?.name||"")}`:"no price yet"}</div></button>`}).join("");
+  renderDetail(L);
+}
+function badge(r){const d=days(r.at);
+  if(d>30) return `<span class="pill old"><i></i>${d} days old</span>`;
+  const lab={sample:"Sample",community:"Community",receipt:"Verified receipt"}[r.source]||r.source;
+  return `<span class="pill ${esc(r.source)}"><i></i>${lab}</span>`}
+function ago(iso){const d=days(iso);return d<=0?"today":d===1?"yesterday":d+" days ago"}
+function renderDetail(L){
+  const p=P(S.sel); if(!p){$("#detail").innerHTML="";return}
+  const pr=pricesFor(p.id,L);
+  const lines=pr.map((r,i)=>`<div class="rline${i===0&&pr.length>1?" best":""}">
+     <div class="store"><span>${esc(ST(r.sid)?.name||r.sid)}</span></div><div class="price">${fmt(r.price)}</div>
+     <div class="meta"><span class="num">${fmt(unitPrice(p,r.price))}/${unitLabel(p)}</span>${badge(r)}<span>${ago(r.at)}</span></div></div>`).join("");
+  const spread=pr.length>1?pr[pr.length-1].price-pr[0].price:0;
+  $("#detail").innerHTML=`<div class="card" style="display:grid;gap:12px">
+    <div><span class="eyebrow">${esc(p.cat)} · ${esc(p.packLabel)}</span><h2 style="font-size:21px;margin-top:4px">${esc(p.en)}</h2><div class="ur" style="font-size:17px">${esc(p.ur||"")}</div></div>
+    ${pr.length?`<div class="receipt">${lines}</div>`:`<div class="empty">No price for ${esc(S.city)} yet. Be the first to report one.</div>`}
+    ${p.official&&pr.length?(()=>{const prem=(pr[0].price-p.official)/p.official*100;return `<p style="margin:0;font-size:14px">Official DC rate <b class="num">${fmt(p.official)}</b>${p.officialSample?' <span class="pill sample"><i></i>Sample</span>':""} · cheapest market price is <b class="${prem>0?"bad":"ok"}">${prem>0?"+":""}${prem.toFixed(1)}%</b> ${prem>0?"above":"below"} it.</p>`})():""}
+    ${spread>0?`<p style="margin:0;font-size:14px">Buying at <b>${esc(ST(pr[0].sid)?.name)}</b> instead of <b>${esc(ST(pr[pr.length-1].sid)?.name)}</b> saves <b class="ok">${fmt(spread)}</b> on one pack.</p>`:""}
+    <div class="chart" id="chart">${chart(p)}</div>
+    <div class="row"><button class="btn primary small" data-addb="${p.id}">Add to basket</button><button class="btn small" data-report="${p.id}">Report a price</button></div>
+  </div>`;
+}
+function chart(p){
+  const by={};
+  for(const o of S.obs){if(o.city!==S.city)continue;for(const it of o.items||[]){if(it.pid!==p.id)continue;(by[o.at.slice(0,7)]??=[]).push(it.price)}}
+  const months=Object.keys(by).sort(); if(months.length<2) return `<p class="muted" style="font-size:13px;margin:0">Price history appears once there are prices from two different months.</p>`;
+  const med=months.map(m=>{const a=by[m].sort((x,y)=>x-y);return a[Math.floor(a.length/2)]});
+  const W=320,H=120,l=46,r=12,t=12,b=24,lo=Math.min(...med),hi=Math.max(...med),span=(hi-lo)||1;
+  const x=i=>l+i*(W-l-r)/(months.length-1), y=v=>t+(1-(v-lo)/span)*(H-t-b);
+  const pts=med.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const chg=med.at(-1)-med[0], pct=(chg/med[0]*100).toFixed(1);
+  return `<div class="row" style="justify-content:space-between"><span class="eyebrow">Middle price by month · ${esc(S.city)}</span><span class="num ${chg>0?"bad":"ok"}" style="font-size:13px">${chg>0?"▲":"▼"} ${fmt(Math.abs(chg))} (${pct}%)</span></div>
+  <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Price history">
+   <line x1="${l}" x2="${W-r}" y1="${y(hi)}" y2="${y(hi)}" stroke="var(--line)"/><line x1="${l}" x2="${W-r}" y1="${y(lo)}" y2="${y(lo)}" stroke="var(--line)"/>
+   <text x="${l-6}" y="${y(hi)+4}" text-anchor="end">${Math.round(hi)}</text><text x="${l-6}" y="${y(lo)+4}" text-anchor="end">${Math.round(lo)}</text>
+   <polyline points="${pts}" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linejoin="round"/>
+   ${med.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="${i===med.length-1?4:2.5}" fill="${i===med.length-1?"var(--haldi)":"var(--green)"}"/>`).join("")}
+   ${months.map((m,i)=>`<text x="${x(i)}" y="${H-6}" text-anchor="middle">${MN[+m.slice(5)-1]}</text>`).join("")}
+  </svg>`;
+}
+function renderRank(){
+  const L=latest(); $("#rankCity").textContent=S.city;
+  const stocked=S.stores.filter(s=>S.products.some(p=>L[p.id+"|"+s.id]));
+  const common=S.products.filter(p=>stocked.every(s=>L[p.id+"|"+s.id]));
+  if(stocked.length<2||!common.length){$("#rank").innerHTML=`<div class="empty">Store comparison appears when two or more stores have prices for the same items.</div>`;return}
+  const tot=stocked.map(s=>({s,t:common.reduce((a,p)=>a+L[p.id+"|"+s.id].price,0)})).sort((a,b)=>a.t-b.t);
+  const max=tot.at(-1).t;
+  $("#rank").innerHTML=tot.map((r,i)=>`<div class="rankrow"><span class="num muted">${i+1}</span><div style="min-width:0"><div class="row" style="justify-content:space-between"><b>${esc(r.s.name)}</b><span class="num">${fmt(r.t)}${i?` <span class="bad" style="font-size:12px">+${fmt(r.t-tot[0].t)}</span>`:""}</span></div><div class="bar"><span style="width:${(r.t/max*100).toFixed(1)}%"></span></div></div></div>`).join("")+
+    `<p class="muted" style="font-size:12.5px;margin:6px 0 0">${common.length} items compared.</p>`;
+}
+
+/* ---------- basket ---------- */
+function saveBasket(){store.set("basket",S.basket);
+  if(S.uid) sb.from("baskets").upsert({user_id:S.uid,items:S.basket,updated_at:new Date().toISOString()}).then(()=>{});
+  renderBasket()}
+function renderBasket(){
+  const ids=Object.keys(S.basket).filter(id=>P(id)&&S.basket[id]>0);
+  const n=ids.reduce((a,id)=>a+S.basket[id],0); $("#bcount").hidden=!n; $("#bcount").textContent=n;
+  $("#badd").innerHTML=S.products.map(p=>`<option value="${p.id}">${esc(p.en)}</option>`).join("");
+  $("#blines").innerHTML=ids.length?ids.map(id=>{const p=P(id);return `<div class="bline"><div style="min-width:0"><b>${esc(p.en)}</b> <span class="ur muted" style="font-size:13px">${esc(p.ur||"")}</span></div>
+    <span class="qty"><button aria-label="Fewer" data-q="${id}" data-d="-1">−</button><span class="num">${S.basket[id]}</span><button aria-label="More" data-q="${id}" data-d="1">+</button></span>
+    <button class="btn small" data-q="${id}" data-d="-999" aria-label="Remove ${esc(p.en)}">Remove</button></div>`}).join(""):`<div class="empty">Your basket is empty. Add items above, or let the AI planner build one.</div>`;
+  $("#bopts").innerHTML=ids.length?compare(ids):"";
+}
+function compare(ids){
+  const L=latest(), q=id=>S.basket[id];
+  const cost=(id,sid)=>{const r=L[id+"|"+sid];return r?r.price*q(id):null};
+  // A: one store
+  const singles=S.stores.map(s=>{let t=0,miss=[];for(const id of ids){const c=cost(id,s.id);c==null?miss.push(id):t+=c}return{s,t,miss}}).filter(x=>x.t>0)
+    .sort((a,b)=>a.miss.length-b.miss.length||a.t-b.t);
+  // B: cheapest per item
+  let tB=0,missB=[],planB={};for(const id of ids){const pr=pricesFor(id,L);if(!pr.length){missB.push(id);continue}tB+=pr[0].price*q(id);(planB[pr[0].sid]??=[]).push(id)}
+  // C: best pair
+  let best=null;for(let i=0;i<S.stores.length;i++)for(let j=i;j<S.stores.length;j++){const a=S.stores[i].id,b=S.stores[j].id;let t=0,miss=0,plan={};
+    for(const id of ids){const ca=cost(id,a),cb=cost(id,b);if(ca==null&&cb==null){miss++;continue}const useA=cb==null||(ca!=null&&ca<=cb);t+=useA?ca:cb;(plan[useA?a:b]??=[]).push(id)}
+    if(!best||miss<best.miss||(miss===best.miss&&t<best.t)) best={t,miss,plan}}
+  if(!singles.length) return `<div class="empty" style="grid-column:1/-1">No prices for these items in ${esc(S.city)} yet.</div>`;
+  const A=singles[0], storesB=Object.keys(planB).length;
+  const list=plan=>Object.entries(plan).map(([sid,its])=>`<li><b>${esc(ST(sid)?.name)}</b>: ${its.map(id=>esc(P(id).en)).join(", ")}</li>`).join("");
+  const missing=m=>m.length?`<p class="bad" style="font-size:13px;margin:0">No price for: ${m.map(id=>esc(P(id).en)).join(", ")}</p>`:"";
+  return `
+  <div class="card opt"><span class="tag">Option A · one store</span><div class="total">${fmt(A.t)}</div><div>Everything at <b>${esc(A.s.name)}</b></div>${missing(A.miss)}
+    <p class="muted" style="font-size:13px;margin:0">${A.t>tB?`${fmt(A.t-tB)} more than the cheapest possible.`:"Same as the cheapest possible."}</p></div>
+  <div class="card opt rec"><span class="tag">Option C · best practical ✓</span><div class="total">${fmt(best.t)}</div><div>Two stores at most</div><ul>${list(best.plan)}</ul>
+    <p class="ok" style="font-size:13px;margin:0">Saves ${fmt(A.t-best.t)} against Option A.</p></div>
+  <div class="card opt"><span class="tag">Option B · cheapest item by item</span><div class="total">${fmt(tB)}</div><div>${storesB} store${storesB>1?"s":""}</div><ul>${list(planB)}</ul>${missing(missB)}</div>`;
+}
+
+/* ---------- report ---------- */
+function fillReportSelects(){
+  $("#mprod").innerHTML=S.products.map(p=>`<option value="${p.id}">${esc(p.en)}</option>`).join("");
+  const cur=$("#mstore").value;$("#mstore").innerHTML=S.stores.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("")+`<option value="__new">+ Add a store or market</option>`;if(cur)$("#mstore").value=cur;
+  if(!$("#mdate").value) $("#mdate").value=today();
+}
+async function addObs(sid,at,items,source){
+  if(!S.uid){openSignin();throw {message:"Sign in to save prices."}}
+  const {error}=await sb.from("obs").insert({sid,city:S.city,at,items,source});
+  if(error) throw {message:"Could not save: "+error.message};
+  await loadObs();
+}
+async function ai(prompt,file){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){openSignin();throw {code:"signin"}}
+  let image,mimeType;
+  if(file){mimeType=file.type||"image/jpeg";image=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(file)})}
+  const r=await fetch("/api/ai",{method:"POST",headers:{"content-type":"application/json",authorization:"Bearer "+session.access_token},body:JSON.stringify({prompt,image,mimeType})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw {code:"ai",message:j.error||"The AI service did not answer."};
+  return j.result;
+}
+async function readReceipt(file){
+  const st=$("#rstatus");
+  st.textContent="Reading the receipt…"; $("#rreview").innerHTML="";
+  const cat=S.products.map(p=>`${p.id}: ${p.en} (${p.packLabel})`).join("\n"), sts=S.stores.map(s=>`${s.id}: ${s.name}`).join("\n");
+  try{
+    const out=await ai(`You read Pakistani grocery receipts. Return JSON only:
+{"store": store id from the list or null, "date": "YYYY-MM-DD" or null, "lines":[{"text": the item text as printed, "pid": product id from the catalogue or null if no exact pack match, "unit_price": price in rupees for ONE unit of that item as a number}]}
+Use unit price (line total divided by quantity). Skip taxes, discounts and totals. Never guess a product that is not clearly the same item and pack size.
+Stores:\n${sts}\nCatalogue:\n${cat}`,file);
+    const lines=(out&&Array.isArray(out.lines))?out.lines:[];
+    if(!lines.length){st.textContent="No item prices found on that photo. Try a sharper, straight photo.";return}
+    st.textContent=`Found ${lines.length} lines. Check them, then save.`;
+    const sid=S.stores.find(s=>s.id===out.store)?out.store:S.stores[0]?.id; const at=/^\d{4}-\d{2}-\d{2}$/.test(out.date||"")?out.date:today();
+    $("#rreview").innerHTML=`<div class="grid2" style="margin-top:12px"><div class="field"><label for="rsid">Store</label><select id="rsid">${S.stores.map(s=>`<option value="${s.id}"${s.id===sid?" selected":""}>${esc(s.name)}</option>`).join("")}</select></div>
+      <div class="field"><label for="rat">Date</label><input id="rat" type="date" value="${at}"></div></div>
+      <div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Save</th><th>On receipt</th><th>Item</th><th>Price (Rs)</th></tr></thead><tbody>
+      ${lines.map((l,i)=>`<tr><td><input type="checkbox" id="rk${i}" ${l.pid&&P(l.pid)?"checked":""} style="width:auto;min-width:0"></td><td>${esc(l.text)}</td>
+      <td><select id="rp${i}"><option value="">Not in list</option>${S.products.map(p=>`<option value="${p.id}"${p.id===l.pid?" selected":""}>${esc(p.en)}</option>`).join("")}</select></td>
+      <td><input id="rv${i}" type="number" min="1" value="${Math.round(+l.unit_price||0)||""}"></td></tr>`).join("")}</tbody></table></div>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="rsave" data-n="${lines.length}">Save checked prices</button></div>`;
+  }catch(e){st.textContent=e&&e.code==="signin"?"Sign in to read receipts.":(e&&e.message)||"Could not read that receipt. Try again or add prices one by one."}
+}
+
+/* ---------- AI planner ---------- */
+async function plan(){
+  const st=$("#astatus"), L=latest();
+  const budget=+$("#abudget").value||0, people=+$("#apeople").value||1, notes=$("#anotes").value.trim();
+  const priced=S.products.map(p=>({p,lo:pricesFor(p.id,L)[0]})).filter(x=>x.lo);
+  if(!priced.length){st.textContent=`No prices in ${S.city} yet.`;return}
+  st.textContent="Planning…"; $("#arun").disabled=true;
+  try{
+    const out=await ai(`Plan one month of groceries for a household in ${S.city}, Pakistan. Budget Rs ${budget}. People: ${people}. Notes from the user: ${notes||"none"}.
+Choose only from this list (id: item, cheapest price in rupees per pack):
+${priced.map(x=>`${x.p.id}: ${x.p.en} (${x.p.packLabel}), Rs ${x.lo.price}`).join("\n")}
+Pick sensible monthly quantities in whole packs for staples first (atta, rice, oil or ghee, sugar, daal, tea, milk), then the rest, and stay under budget.
+Return JSON only: {"items":[{"id": "...", "qty": number, "why": "short reason"}], "note": "one or two plain sentences of advice"}`);
+    const items=(out&&Array.isArray(out.items)?out.items:[]).filter(i=>P(i.id)&&+i.qty>0).map(i=>({id:i.id,qty:Math.min(60,Math.round(+i.qty)),why:String(i.why||"")}));
+    if(!items.length){st.textContent="The planner returned no usable items. Try again.";return}
+    let tot=0; const rows=items.map(i=>{const lo=pricesFor(i.id,L)[0];const c=lo?lo.price*i.qty:0;tot+=c;return `<div class="bline"><div style="min-width:0"><b>${esc(P(i.id).en)}</b> × ${i.qty}<div class="muted" style="font-size:13px">${esc(i.why)}</div></div><span class="num">${fmt(c)}</span><span></span></div>`}).join("");
+    S.lastPlan=items;
+    $("#aout").innerHTML=`<div class="card"><div class="row"><h2 class="grow" style="font-size:18px">Suggested basket</h2><span class="num" style="font-size:20px">${fmt(tot)}</span></div>
+      <p class="${tot>budget?"bad":"ok"}" style="font-size:13.5px;margin:4px 0 8px">${tot>budget?`${fmt(tot-budget)} over budget at the cheapest prices.`:`${fmt(budget-tot)} left from Rs ${budget.toLocaleString("en-PK")} at the cheapest prices.`}</p>
+      ${rows}${out.note?`<p style="margin:12px 0 0">${esc(out.note)}</p>`:""}
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="ause">Use as my basket</button><span class="muted" style="font-size:12.5px">AI suggestions can be wrong; check quantities before you shop.</span></div></div>`;
+    st.textContent="";
+  }catch(e){st.textContent=e&&e.code==="signin"?"Sign in to use the planner.":(e&&e.message)||"The planner could not answer. Try again."}
+  finally{$("#arun").disabled=false}
+}
+
+/* ---------- manage ---------- */
+function renderManage(){
+  const by={};for(const o of S.obs)by[o.source]=(by[o.source]||0)+1;
+  $("#mstats").innerHTML=`<h2 style="font-size:17px">Price reports</h2>
+   <p style="margin:6px 0 12px">${S.obs.length} reports: ${Object.entries(by).map(([k,v])=>`${v} ${esc(k)}`).join(", ")||"none"}.</p>
+   <p class="muted" style="font-size:13.5px;margin:0 0 12px">Sample prices came from the first prototype so the app has something to compare. Remove them once enough real prices are in.</p>
+   <div class="row"><button class="btn" id="clrSample" ${by.sample?"":"disabled"}>Remove sample prices</button><span id="clrConfirm" hidden><span class="bad" style="margin-right:8px">Remove ${by.sample||0} sample reports for good?</span><button class="btn small" id="clrYes">Yes, remove</button> <button class="btn small" id="clrNo">Keep</button></span></div>`;
+}
+
+/* ---------- wiring ---------- */
+function renderAll(){renderCats();renderList();renderRank();renderBasket();fillReportSelects();if(S.canEdit)renderManage()}
+function setTab(t){S.tab=t;$$(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));$$("main > section").forEach(s=>s.hidden=s.id!=="tab-"+t);store.set("tab",t)}
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("button,[data-cat]"); if(!b) return;
+  if(b.dataset.tab) return setTab(b.dataset.tab);
+  if(b.dataset.cat){S.cat=b.dataset.cat;renderCats();renderList();return}
+  if(b.dataset.pid){S.sel=b.dataset.pid;renderList();return}
+  if(b.dataset.addb){S.basket[b.dataset.addb]=(S.basket[b.dataset.addb]||0)+1;saveBasket();toast(P(b.dataset.addb).en+" added to basket");return}
+  if(b.dataset.report){setTab("report");$("#mprod").value=b.dataset.report;$("#mprice").focus();return}
+  if(b.dataset.q){const id=b.dataset.q,d=+b.dataset.d;S.basket[id]=Math.max(0,(S.basket[id]||0)+d);if(!S.basket[id])delete S.basket[id];saveBasket();return}
+  if(b.id==="baddBtn"){const id=$("#badd").value;S.basket[id]=(S.basket[id]||0)+1;saveBasket();return}
+  if(b.id==="ause"&&S.lastPlan){S.basket={};for(const i of S.lastPlan)S.basket[i.id]=i.qty;saveBasket();setTab("basket");toast("Basket replaced with the plan");return}
+  if(b.id==="rsave"){const n=+b.dataset.n,items=[];for(let i=0;i<n;i++){if(!$("#rk"+i).checked)continue;const pid=$("#rp"+i).value,price=+$("#rv"+i).value;if(pid&&price>0)items.push({pid,price})}
+    if(!items.length){toast("Tick at least one line with an item and a price");return}
+    b.disabled=true;try{await addObs($("#rsid").value,$("#rat").value||today(),items,"receipt");$("#rreview").innerHTML="";$("#rstatus").textContent=`Saved ${items.length} prices. Thank you.`}catch(err){toast(err.message||"Could not save. Try again.");b.disabled=false}return}
+  if(b.id==="clrSample"){$("#clrConfirm").hidden=false;return}
+  if(b.id==="clrNo"){$("#clrConfirm").hidden=true;return}
+  if(b.id==="clrYes"){b.disabled=true;const {error,count}=await sb.from("obs").delete({count:"exact"}).eq("source","sample");toast(error?"Could not remove: "+error.message:`Removed ${count} sample reports`);await loadObs();return}
+  if(b.id==="authBtn"){if(S.uid){await sb.auth.signOut();location.reload()}else openSignin();return}
+  if(b.id==="closeSignin"){$("#signin").hidden=true;return}
+});
+$("#q").addEventListener("input",e=>{S.q=e.target.value;renderList()});
+$("#city").addEventListener("change",e=>{S.city=e.target.value;store.set("city",S.city);renderAll();if(sb)loadObs()});
+$("#mstore").addEventListener("change",e=>{$("#mnewWrap").hidden=e.target.value!=="__new"});
+$("#mform").addEventListener("submit",async e=>{e.preventDefault();const price=+$("#mprice").value;if(!(price>0))return;
+  let sid=$("#mstore").value;
+  $("#msave").disabled=true;try{
+    if(sid==="__new"){const name=$("#mnew").value.trim();if(!name){$("#mhint").textContent="Type the store or market name.";return}
+      if(!S.uid){openSignin();throw {message:"Sign in to save prices."}}
+      const {data,error}=await sb.from("stores").insert({name:name.slice(0,60),type:"local",city:S.city,created_by:S.uid}).select("id").single();
+      if(error) throw {message:"Could not add the store: "+error.message};sid=data.id;await loadStores();$("#mnew").value="";$("#mnewWrap").hidden=true}
+    await addObs(sid,$("#mdate").value||today(),[{pid:$("#mprod").value,price}],"community");$("#mprice").value="";$("#mhint").textContent="Saved. Thank you.";}catch(err){$("#mhint").textContent=err.message||"Could not save. Try again."}finally{$("#msave").disabled=false}});
+$("#aform").addEventListener("submit",e=>{e.preventDefault();plan()});
+const drop=$("#drop");
+["dragover","dragenter"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(t=>drop.addEventListener(t,()=>drop.classList.remove("over")));
+drop.addEventListener("drop",e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)readReceipt(f)});
+$("#rfile").addEventListener("change",e=>{const f=e.target.files[0];if(f)readReceipt(f);e.target.value=""});
+
+$("#city").value=S.city; setTab(store.get("tab","basket")); renderAll();
+
+/* ---------- live data (Supabase) ---------- */
+const cfg=window.SASTACHECK||{};
+const sb=window.supabase&&cfg.supabaseUrl?window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey):null;
+function openSignin(){$("#signin").hidden=false;$("#email").focus()}
+async function loadStores(){const {data,error}=await sb.from("stores").select("*");if(error)throw error;S.stores=data.sort((a,b)=>(a.sort??99)-(b.sort??99))}
+async function loadObs(){
+  // newest first; enough for a city's history at launch size
+  const {data,error}=await sb.from("obs").select("id,sid,city,at,items,source,by,created_at").eq("city",S.city).order("at",{ascending:false}).limit(5000);
+  if(error){toast("Prices could not load. Reload the page to try again.");return}
+  S.obs=data.map(o=>({...o,ts:Date.parse(o.created_at)}));renderList();renderRank();renderBasket();if(S.canEdit)renderManage();
+}
+if(!sb){$("#offline").hidden=false;$("#offline").textContent="SastaCheck is not connected to its database yet. Add the Supabase details to config.js.";}
+else (async()=>{
+  try{
+    const [{data:prods,error:e1}]=await Promise.all([sb.from("products").select("*"),loadStores()]);
+    if(e1) throw e1;
+    S.products=prods.map(p=>({...p,packLabel:p.pack_label,officialSample:p.official_sample,pack:+p.pack,official:p.official==null?null:+p.official})).sort((a,b)=>(a.sort??99)-(b.sort??99));
+    renderAll(); await loadObs();
+  }catch(e){$("#offline").hidden=false}
+  const setUser=async session=>{
+    S.uid=session?.user?.id||null; $("#who").textContent=session?.user?.email||""; $("#authBtn").textContent=S.uid?"Sign out":"Sign in";
+    if(!S.uid){S.canEdit=false;$("#manageTab").hidden=true;return}
+    const {data:adm}=await sb.from("admins").select("user_id").eq("user_id",S.uid).maybeSingle();
+    S.canEdit=!!adm; $("#manageTab").hidden=!S.canEdit; if(S.canEdit)renderManage();
+    const {data:bk}=await sb.from("baskets").select("items").eq("user_id",S.uid).maybeSingle();
+    if(bk&&bk.items&&Object.keys(bk.items).length){S.basket=bk.items;store.set("basket",S.basket);renderBasket()}
+  };
+  const {data:{session}}=await sb.auth.getSession(); await setUser(session);
+  sb.auth.onAuthStateChange((_e,sess)=>{setUser(sess);if(sess)$("#signin").hidden=true});
+  $("#signinForm").addEventListener("submit",async e=>{e.preventDefault();const email=$("#email").value.trim();if(!email)return;
+    $("#sendLink").disabled=true;const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin}});
+    $("#signinMsg").textContent=error?"Could not send the link: "+error.message:"Check your email and tap the link to sign in.";$("#sendLink").disabled=false});
+})();
+})();
+</script>
+
+</body>
+</html>
